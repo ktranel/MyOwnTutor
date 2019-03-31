@@ -10,6 +10,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+//Application Gateways
+app.use('/user', require('./API_Gateways/User_Gateway'));
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));

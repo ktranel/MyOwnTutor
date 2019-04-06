@@ -4,6 +4,11 @@ const router = express.Router();
 const asyncHandler = require('../Helpers/asyncHandler');
 const validate = require('validate.js');
 
+/*
+Services
+ */
+const User = require('../Services/Users/User_Service');
+
 //route to create a user
 /*
 @body
@@ -13,7 +18,7 @@ const validate = require('validate.js');
 - password : string
 - email : string
  */
-router.post('/', asyncHandler((req, res)=>{
+router.post('/', asyncHandler( async (req, res)=>{
     const constraints = {
         first_name: {
             presence :true,
@@ -46,6 +51,12 @@ router.post('/', asyncHandler((req, res)=>{
 
     if(validation) return res.status(400).json({error: validation});
 
+    //forward user service
+    const found_user = await  User.ValidateUserExists(username, email);
+    if(found_user){
+        if(username === found_user.username) return res.status(400).json({error: `Username: ${username} is already taken`});
+        if(email === found_user.email) return res.status(400).json({error: `Email: ${email} is already taken`});
+    }
 
 }));
 

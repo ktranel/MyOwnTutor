@@ -1,4 +1,6 @@
-const {UsernameExists, EmailExists} = require('./User_DB');
+const {UsernameExists,
+            EmailExists,
+            CreateUser} = require('./User_DB');
 
 async function ValidateUserExists(username, email){
     if(!username || !email) throw new Error('Invalid number of args passed. Please pass username and email');
@@ -11,11 +13,17 @@ async function ValidateUserExists(username, email){
         taken_valid_email = await EmailExists(email);
     }
 
-    if(taken_valid_username && taken_valid_email) return taken_valid_username;
+    if(taken_valid_username) return taken_valid_username;
+    if(taken_valid_email) return taken_valid_email;
 
     return null;
 }
 
+async function CreateNewUser(args){
+    return await CreateUser(args)
+}
+
 module.exports = {
-    ValidateUserExists
+    ValidateUserExists,
+    CreateNewUser
 };

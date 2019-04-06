@@ -169,6 +169,47 @@ describe('User DB Test Suite', ()=>{
         expect(user.password).to.equal(password);
         expect(user.permission_id).to.equal(2);
     });
+
+    /*
+    RETURN
+    error
+        error message should be Invalid argument: permission_id not found
+     */
+    it('should throw an error because an invalid permission_id is passed to create user', async ()=>{
+        try{
+            const username = 'test_test';
+            const first_name = 'test';
+            const last_name = 'test';
+            const password = 'test_test';
+            const email = 'test@test.com';
+            const permission_id = 'sflkjflkdsj';
+            const user = await CreateUser({first_name, last_name, password,username, email, permission_id});
+        }catch(e){
+            expect(e).to.be.an('Error');
+            expect(e.message).to.equal('Invalid argument: permission_id not found')
+    }
+    });
+
+    it('should create a new user with a valid permission_id by lookup in the permission table', async()=>{
+        const username = 'test_test';
+        const first_name = 'test';
+        const last_name = 'test';
+        const password = 'test_test';
+        const email = 'test@test.com';
+        const permission_id = 1;
+        const user = await CreateUser({first_name, last_name, password,username, email, permission_id});
+
+        //destroy user instance in database because it's a test
+        await user.destroy({ force: true });
+
+        expect(user).to.be.an('object');
+        expect(user.first_name).to.equal(first_name);
+        expect(user.last_name).to.equal(last_name);
+        expect(user.username).to.equal(username);
+        expect(user.email).to.equal(email);
+        expect(user.password).to.equal(password);
+        expect(user.permission_id).to.equal(1);
+    });
 });
 
 async function CreateDummyUser(){

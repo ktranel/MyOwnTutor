@@ -40,6 +40,9 @@ async function CreateUser(args){
     if(!args.email) throw new Error('Invalid argument: email');
     if(!args.permission_id) args.permission_id = 2;
 
+    const permissions = await _ValidatePermissionId(args.permission_id);
+    if(!permissions) throw new Error('Invalid argument: permission_id not found');
+
     const user = await db.user.create({
         first_name: args.first_name,
         last_name: args.last_name,
@@ -50,6 +53,16 @@ async function CreateUser(args){
     });
 
     return user;
+}
+
+async function _ValidatePermissionId(permission_id){
+    const permissions = await db.permission.findOne({
+        where: {id : permission_id}
+    });
+
+    if(permissions) return permissions;
+
+    return null;
 }
 
 module.exports = {

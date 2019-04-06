@@ -17,6 +17,7 @@ const User = require('../Services/Users/User_Service');
 - username : string
 - password : string
 - email : string
+- permission_id* : int
  */
 router.post('/', asyncHandler( async (req, res)=>{
     const constraints = {
@@ -46,6 +47,7 @@ router.post('/', asyncHandler( async (req, res)=>{
     const username = req.body.username;
     const password = req.body.password;
     const email = req.body.email;
+    const permission_id = req.body.permission_id;
 
     const validation = validate({first_name, last_name, username, password, email}, constraints);
 
@@ -58,6 +60,9 @@ router.post('/', asyncHandler( async (req, res)=>{
         if(email === found_user.email) return res.status(400).json({error: `Email: ${email} is already taken`});
     }
 
+    const new_user = await User.CreateNewUser({first_name, last_name, username, password, email, permission_id});
+
+    return res.status(200).json({user: new_user});
 }));
 
 module.exports = router;

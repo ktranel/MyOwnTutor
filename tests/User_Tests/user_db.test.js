@@ -1,5 +1,5 @@
 const {expect} = require('chai');
-const {UsernameExists, EmailExists, CreateUser} = require('../../Services/Users/User_DB');
+const {UsernameExists, EmailExists, CreateUser, FindUserById} = require('../../Services/Users/User_DB');
 const db = require('../../models');
 
 describe('User DB Test Suite', ()=>{
@@ -170,11 +170,6 @@ describe('User DB Test Suite', ()=>{
         expect(user.permission_id).to.equal(2);
     });
 
-    /*
-    RETURN
-    error
-        error message should be Invalid argument: permission_id not found
-     */
     it('should throw an error because an invalid permission_id is passed to create user', async ()=>{
         try{
             const username = 'test_test';
@@ -209,6 +204,31 @@ describe('User DB Test Suite', ()=>{
         expect(user.email).to.equal(email);
         expect(user.password).to.equal(password);
         expect(user.permission_id).to.equal(1);
+    });
+
+    it('should return a user based on their id', async()=>{
+        const user = await CreateDummyUser();
+
+        const found = await FindUserById(user.id);
+
+        await DestroyDummyUser(user);
+        expect(found).to.be.an('object');
+        expect(found).to.have.property('permission_id');
+        expect(found.username).to.equal('test_test');
+        expect(found.permission_id).to.equal(1);
+
+
+    });
+
+    it('should throw an error when finind a user by id , because no user_id is passed', async()=>{
+        const user = await CreateDummyUser();
+        try{
+            await FindUserById();
+        }catch(e){
+            await DestroyDummyUser(user);
+            expect(e).to.be.an('Error');
+            expect(e.message).to.equal('Invalid argument: user_id');
+        }
     });
 });
 

@@ -17,6 +17,24 @@ async function UsernameExists(username){
 }
 
 /*
+Fuction for finding a user based on their user id.
+@args
+- user_id : string
+
+@returns user object
+ */
+async function FindUserById(user_id){
+    if(!user_id) throw new Error('Invalid argument: user_id');
+    const user = await db.user.findOne({
+        where : {id : user_id}
+    });
+
+    if(user) return user;
+
+    return null;
+}
+
+/*
 Function checks if emails already exists in database.
 Return user if email already taken, false otherwise.
  */
@@ -68,5 +86,6 @@ async function _ValidatePermissionId(permission_id){
 module.exports = {
     UsernameExists,
     EmailExists,
-    CreateUser
+    CreateUser,
+    FindUserById
 };

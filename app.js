@@ -2,6 +2,7 @@ const createError = require('http-errors');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const passport = require('passport');
 
 const app = express();
 
@@ -9,6 +10,9 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+//passport authentication
+app.use(passport.initialize());
 
 //Application Gateways
 app.use('/user', require('./API_Gateways/User_Gateway'));

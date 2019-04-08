@@ -4,6 +4,11 @@ const router = express.Router();
 const asyncHandler = require('../Helpers/asyncHandler');
 const validate = require('validate.js');
 
+//API ACCESS MODIFIERS
+const admin_access = require('../middleware/admin_access');
+const block_curator = require('../middleware/block_curator');
+const block_student = require('../middleware/block_student');
+
 /*
 Services
  */
@@ -19,7 +24,7 @@ const User = require('../Services/Users/User_Service');
 - email : string
 - permission_id* : int
  */
-router.post('/', asyncHandler( async (req, res)=>{
+router.post('/', admin_access,  asyncHandler( async (req, res)=>{
     const constraints = {
         first_name: {
             presence :true,

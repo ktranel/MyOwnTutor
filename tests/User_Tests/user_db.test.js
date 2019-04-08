@@ -1,5 +1,5 @@
 const {expect} = require('chai');
-const {UsernameExists, EmailExists, CreateUser, FindUserById} = require('../../Services/Users/User_DB');
+const {UsernameExists, EmailExists, CreateUser, FindUser} = require('../../Services/Users/User_DB');
 const db = require('../../models');
 
 describe('User DB Test Suite', ()=>{
@@ -209,7 +209,7 @@ describe('User DB Test Suite', ()=>{
     it('should return a user based on their id', async()=>{
         const user = await CreateDummyUser();
 
-        const found = await FindUserById(user.id);
+        const found = await FindUser(user.id);
 
         await DestroyDummyUser(user);
         expect(found).to.be.an('object');
@@ -223,12 +223,26 @@ describe('User DB Test Suite', ()=>{
     it('should throw an error when finind a user by id , because no user_id is passed', async()=>{
         const user = await CreateDummyUser();
         try{
-            await FindUserById();
+            await FindUser();
         }catch(e){
             await DestroyDummyUser(user);
             expect(e).to.be.an('Error');
             expect(e.message).to.equal('Invalid argument: user_id');
         }
+    });
+
+    it('should return a user based on their username', async()=>{
+        const user = await CreateDummyUser();
+
+        const found = await FindUser(user.username);
+
+        await DestroyDummyUser(user);
+        expect(found).to.be.an('object');
+        expect(found).to.have.property('permission_id');
+        expect(found.username).to.equal('test_test');
+        expect(found.permission_id).to.equal(1);
+
+
     });
 });
 

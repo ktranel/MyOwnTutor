@@ -1,7 +1,10 @@
 const {UsernameExists,
             EmailExists,
             CreateUser,
-            FindUserById} = require('./User_DB');
+            FindUser} = require('./User_DB');
+
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 async function ValidateUserExists(username, email){
     if(!username || !email) throw new Error('Invalid number of args passed. Please pass username and email');
@@ -21,11 +24,14 @@ async function ValidateUserExists(username, email){
 }
 
 async function CreateNewUser(args){
+    if(args.password){
+        args.password = await _Encrypt(args.password);
+    }
     return await CreateUser(args)
 }
 
-async function FindUser(user_id){
-    return FindUserById(user_id);
+async function UserSearch(credential){
+    return FindUser(credential);
 }
 
 
@@ -33,5 +39,9 @@ async function FindUser(user_id){
 module.exports = {
     ValidateUserExists,
     CreateNewUser,
-    FindUser
+    UserSearch
 };
+
+async function _Encrypt(text){
+    return await bcrypt.hash(text, saltRounds);
+}

@@ -1,4 +1,5 @@
 const db = require('../../models');
+const Op = db.Sequelize.Op;
 
 /*
 Function checks if username already exists in database.
@@ -23,10 +24,13 @@ Fuction for finding a user based on their user id.
 
 @returns user object
  */
-async function FindUserById(user_id){
-    if(!user_id) throw new Error('Invalid argument: user_id');
+async function FindUser(credential){
+    if(!credential) throw new Error('Invalid argument: user_id');
     const user = await db.user.findOne({
-        where : {id : user_id}
+        where : { [Op.or] : [
+                {username: credential},
+                {id: credential}
+            ]}
     });
 
     if(user) return user;
@@ -87,5 +91,5 @@ module.exports = {
     UsernameExists,
     EmailExists,
     CreateUser,
-    FindUserById
+    FindUser
 };

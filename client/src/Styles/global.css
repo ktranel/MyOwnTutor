@@ -1,0 +1,14 @@
+html,
+body,
+#root,
+.app-container{
+    height: 100%;
+}
+
+
+/* Color Theme Swatches in Hex */
+.red { color: #F23C50; }
+.yellow{ color: #FFCB05; }
+.white{ color: #E9FFDF; }
+.lgtBlue{ color: #4AD9D9; }
+.drkBlue{ color: #36B1BF; }

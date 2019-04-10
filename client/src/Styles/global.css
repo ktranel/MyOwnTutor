@@ -12,4 +12,41 @@ body,
 .white{ color: #E9FFDF; }
 .lgtBlue{ color: #4AD9D9; }
 .drkBlue{ color: #112f41; }
+.black{color:#333333;}
 
+/*Typography*/
+
+h1, h2, h3, h4, h5, h6{
+    font-family: 'Heebo', sans-serif;
+}
+
+p, a{
+    font-family: 'Libre Franklin', sans-serif;
+    font-size:16px;
+    line-height: 1rem;
+}
+
+h1{
+    font-size: 48px;
+    font-weight:bold;
+}
+h2{
+    font-size: 36px;
+    font-weight:bold;
+}
+h3{
+    font-size: 36px;
+    font-weight: normal;
+}
+h4{
+    font-size:24px;
+    font-weight:normal;
+}
+h5{
+    font-size:18px;
+    font-weight:normal;
+}
+h6{
+    font-size:14px;
+    font-weight: normal;
+}

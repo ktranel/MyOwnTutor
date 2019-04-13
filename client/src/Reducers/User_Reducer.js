@@ -9,5 +9,9 @@ export const User_Reducer = (state=null, action) =>{
     switch (action.type){
         case USER_AUTH:
             return action.payload;
+
+        default:
+            return state;
+
     }
 };

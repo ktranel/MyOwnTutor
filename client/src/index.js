@@ -10,6 +10,9 @@ import "../node_modules/shed-css/dist/index.css";
 /*Routes*/
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import Student_Routes from './Components/Student_Routes/Student_Routes';
+import Curator_Routes from './Components/Curator_Routes/Curator_Routes';
+import Admin_Routes from './Components/Admin_Routes/Admin_Routes';
+import PrivateRoute from './Components/PrivateRoute/PrivateRoute';
 
 /*Store setup*/
 import { createStore, applyMiddleware } from 'redux';
@@ -27,7 +30,9 @@ ReactDOM.render(
             <Switch>
                 <div className={'app-container container-fluid'}>
                     <Route path={'/'} exact component={Login_Container}/>
-                    <Route path={'/home'} component={Student_Routes}/>
+                    <PrivateRoute path={'/home'} component={Student_Routes}/>
+                    <PrivateRoute path={'/curator'} component={Curator_Routes}/>
+                    <PrivateRoute path={'/admin'} component={Admin_Routes}/>
                 </div>
             </Switch>
         </Router>

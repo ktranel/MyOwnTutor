@@ -13,8 +13,8 @@
 
 .login{
     width:30%;
-    min-width:200px;
+    min-width:300px;
     background:rgba(127, 127, 127, .9);
-    padding:3rem;
+    padding:3%;
     border-radius:4px;
 }

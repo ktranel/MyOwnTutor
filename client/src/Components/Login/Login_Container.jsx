@@ -16,7 +16,7 @@ class Login_Container extends Component{
                     case 2:
                         that.props.history.push('/home');
                         break;
-                        
+
                     case 3:
                         that.props.history.push('/curator');
                         break;

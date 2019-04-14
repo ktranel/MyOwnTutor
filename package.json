@@ -27,6 +27,7 @@
     "pug": "2.0.0-beta11",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "react-loading": "^2.0.3",
     "react-router-dom": "^5.0.0",
     "react-scripts": "^2.1.8",
     "sequelize": "^5.2.7",

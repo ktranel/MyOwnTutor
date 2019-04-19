@@ -8,11 +8,17 @@ body,
 
 /* Color Theme Swatches in Hex */
 .red { color: #F23C50; }
+.redBG{ background-color: #F23C50; }
 .yellow{ color: #FFCB05; }
-.white{ color: #E9FFDF; }
+.yellowBG{ background-color: #FFCB05; }
+.white{ color: #FFFFFF; }
+.whiteBG{ background-color: #FFFFFF; }
 .lgtBlue{ color: #4AD9D9; }
+.lgtBlueBG{ background-color: #4AD9D9; }
 .drkBlue{ color: #112f41; }
+.drkBlueBG{ background-color: #112f41; }
 .black{color:#333333;}
+.blackBG{ background-color: #333333; }
 
 /*Typography*/
 

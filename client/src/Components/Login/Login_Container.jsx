@@ -1,13 +1,17 @@
 import React, {Component} from 'react';
 import Login from './Login';
-import Loading_Screen from '../shared/Loading_Screen/Loading_Screen';
+import LoadingScreen from '../shared/Loading_Screen/Loading_Screen';
 import {UserAuth, GetUser} from "../../Actions/User_Actions";
 import {connect} from 'react-redux';
 
 class Login_Container extends Component{
+    _isMounted = false;
     constructor(props){
         super(props);
-        this.state = {loading : true}
+        this.state = {
+            loading : true,
+            _mounted: true
+        }
     }
 
     componentDidUpdate(prevProps){
@@ -22,9 +26,16 @@ class Login_Container extends Component{
     }
 
     componentDidMount(){
-            this.props.GetUser()
-                .then(()=>this.setState({loading: false}))
-                .catch(e=>console.log(e));
+        this._isMounted = true;
+        this.props.GetUser()
+            .then(()=>{
+                if(this._isMounted) this.setState({loading: false});
+            })
+            .catch(e=>console.log(e));
+    }
+
+    componentWillUnmount(){
+        this._isMounted = false;
     }
 
     SignIn = (username, password) =>{
@@ -32,7 +43,6 @@ class Login_Container extends Component{
         this.props.UserAuth(username, password)
             .then(()=>{
                 that.RedirectUser(that.props.user.permission_id);
-
             })
             .catch(e=>console.log(e));
     };
@@ -56,7 +66,7 @@ class Login_Container extends Component{
         }
     }
     render(){
-        return (this.state.loading ? <Loading_Screen type={'spin'} color={'#000'}/> : <Login SignIn={this.SignIn}/>)
+        return (this.state.loading ? <LoadingScreen type={'spin'} color={'#000'}/> : <Login SignIn={this.SignIn}/>)
     }
 }
 

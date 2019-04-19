@@ -1,0 +1,5 @@
+.admin-nav .active{
+    font-weight: bolder;
+    border-bottom: 1px solid #FFFFFF;
+    padding-bottom: 0.3rem;
+}

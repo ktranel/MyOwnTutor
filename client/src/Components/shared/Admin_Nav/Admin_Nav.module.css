@@ -1,0 +1,16 @@
+.Admin_Nav{
+    padding: 1rem .5rem;
+}
+
+.link{
+    padding: 0 .5rem;
+}
+
+.active{
+    color:#FFCB05;
+    font-weight: bold;
+}
+
+.link:hover{
+    color:#FFCB05;
+}

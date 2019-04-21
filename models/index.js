@@ -36,10 +36,20 @@ db.Sequelize = Sequelize;
 
 //ASSOCIATIONS
 
+//Courses
+db.course.hasMany(db.course_history);
+db.course.belongsTo(db.user);
+
+//Course History
+db.course_history.belongsTo(db.course);
+db.course_history.belongsTo(db.user);
+
 //Permissions
 db.permission.hasMany(db.user);
 
 //Users
+db.user.hasMany(db.course);
+db.user.hasMany(db.course_history);
 db.user.belongsTo(db.permission);
 
 sequelize

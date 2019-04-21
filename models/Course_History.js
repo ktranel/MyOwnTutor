@@ -34,6 +34,12 @@ module.exports= (sequelize, Datatypes)=>{
                 allowNull:false,
                 defaultValue:0
             },
+            course_id:{
+                //fk from course table
+                type: Datatypes.INTEGER,
+                required:true,
+                allowNull:false
+            },
             updated_at:{ type: Datatypes.DATE},
             deleted_at:{ type: Datatypes.DATE}
         },

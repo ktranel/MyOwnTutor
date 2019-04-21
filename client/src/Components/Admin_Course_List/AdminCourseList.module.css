@@ -1,0 +1,27 @@
+.course-listing{
+    background: #eee;
+    padding:1rem .2rem;
+    margin-bottom: 1rem;
+}
+
+.course-listing:hover{
+    background:#ccc;
+}
+
+.course-listing.unpublished{
+    background: lightskyblue;
+}
+
+.course-listing.unpublished:hover{
+    background:#4AD9D9;
+}
+
+.course_meta{
+    text-align: right;
+}
+
+@media only screen and (max-width: 767px) {
+    .course_meta{
+        text-align: left;
+    }
+}

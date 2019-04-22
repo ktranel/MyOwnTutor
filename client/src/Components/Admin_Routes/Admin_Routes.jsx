@@ -9,7 +9,8 @@ const Admin_Routes = (props) =>{
             <AdminNav/>
             <div className={'p:7'}>
                 <Route path={props.match.path + '/users'} render={()=><div>users</div>}/>
-                <Route path={props.match.path + '/courses'} component={ContainerCourses}/>
+                <Route path={props.match.path + '/courses'} exact component={ContainerCourses}/>
+                <Route path={props.match.path + '/courses/:course'} exact render={()=>{return<div>single course</div>}}/>
                 <Route path={props.match.path + '/videos'} render={()=><div>videos</div>}/>
                 <Route path={props.match.path + '/questions'} render={()=><div>questions</div>}/>
             </div>

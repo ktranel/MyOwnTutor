@@ -4,6 +4,7 @@ import AdminCourseList from '../Admin_Course_List/AdminCourseList';
 const courseMock = {
     courses: [
         {
+            id:1,
             title: 'General Chemistry 1',
             description: 'A general review of chemistry. Geared towards first year chemistry students',
             status: 'published',
@@ -11,6 +12,7 @@ const courseMock = {
             last_edited: '01/01/2018'
         },
         {
+            id:2,
             title: 'General Chemistry 2',
             description: 'A general review of chemistry. Geared towards first year chemistry students',
             status: 'published',
@@ -18,6 +20,7 @@ const courseMock = {
             last_edited: '01/01/2018'
         },
         {
+            id:3,
             title: 'Anatomy & Physiology',
             description: 'A general review of A&P. Geared towards first year med students',
             status: 'draft',

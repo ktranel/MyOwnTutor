@@ -10,9 +10,9 @@ const AdminCourseList = ({courses}) =>{
                     {courses.map(course=>{
                         const status = course.status !== 'published' ? styles.unpublished : '';
                         return(
-                            <div className={`${styles["course-listing"]} ${status} row`}>
+                            <div key={course.id} className={`${styles["course-listing"]} ${status} row`}>
                                 <div className="col-12 col-md-6">
-                                    <Link className={'red'}>{course.title}</Link>
+                                    <Link to={`/admin/courses/${course.title}`} className={'red'}>{course.title}</Link>
                                     <p>{course.description}</p>
                                 </div>
                                 <div className={`${styles.course_meta} col-12 col-md-6`}>

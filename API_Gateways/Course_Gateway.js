@@ -3,6 +3,9 @@ const router = express.Router();
 const asyncHandler = require('../Helpers/asyncHandler');
 const validate = require('validate.js');
 
+/*Services */
+const Courses = require('../Services/Courses/Course_Service');
+
 /*
 Route to create a new course
 
@@ -14,7 +17,7 @@ Route to create a new course
 @return
 - json object
  */
-router.post('/', asyncHandler((req, res)=>{
+router.post('/', asyncHandler(async (req, res)=>{
     //validation
     const constraints = {
         title:{
@@ -33,7 +36,10 @@ router.post('/', asyncHandler((req, res)=>{
     const status = req.body.status;
     const validation = validate({title, status}, constraints);
     if(validation) return res.status(400).json({error:validation});
+
     //check if course title is unique
+    const title_validation = await Courses.CourseSearch({title});
+    if(title_validation) return res.status(400).json({error: `Title ${title} is already taken, please choose another`});
 
     //create new course
 

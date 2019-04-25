@@ -34,6 +34,7 @@ router.post('/', asyncHandler(async (req, res)=>{
     const title = req.body.title;
     const description = req.body.description || null;
     const status = req.body.status;
+    const user_id = req.user.id;
     const validation = validate({title, status}, constraints);
     if(validation) return res.status(400).json({error:validation});
 
@@ -42,8 +43,7 @@ router.post('/', asyncHandler(async (req, res)=>{
     if(title_validation) return res.status(400).json({error: `Title ${title} is already taken, please choose another`});
 
     //create new course
-
-    //change the status of course
+    const course = await Courses.CreateNewCourse({title, description, status, user_id});
 
     //create a new course version
 }));

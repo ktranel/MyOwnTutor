@@ -1,6 +1,6 @@
 const {expect} = require('chai');
 const db = require('../../models');
-const {FindCourse} = require('../../Services/Courses/Course_DB');
+const {FindCourse, CreateCourse} = require('../../Services/Courses/Course_DB');
 
 describe('course test suite', ()=>{
     it('should return a course based on a search of course id', async ()=>{
@@ -47,6 +47,69 @@ describe('course test suite', ()=>{
 
         expect(course).to.be.null;
     });
+
+    it('should return a newly created course object', async ()=>{
+        const user = await CreateDummyUser();
+        const courseInfo = {
+            user_id: user.id,
+            title: 'test title',
+            description: 'test description',
+            status: 'draft'
+        };
+        const course = await CreateCourse(courseInfo);
+        await DestroyDummyUser(user);
+        await DestroyDummyCourse(course);
+        expect(course).to.be.an('object');
+        expect(course).to.have.property('user_id');
+        expect(course.user_id).to.equal(user.id);
+        expect(course).to.have.property('title');
+        expect(course.title).to.equal(courseInfo.title);
+        expect(course).to.have.property('description');
+        expect(course.description).to.equal(courseInfo.description);
+        expect(course).to.have.property('status');
+        expect(course.status).to.equal(courseInfo.status);
+    });
+
+    it('should throw an error because no user_id is passed to CreateCourse', async()=>{
+        const courseInfo = {
+            title: 'test title',
+            description: 'test description',
+            status: 'draft'
+        };
+        try{
+            const course = await CreateCourse(courseInfo);
+        }catch (e) {
+            expect(e).to.be.an('Error');
+            expect(e.message).to.equal('{"user_id":["User id can\'t be blank"]}');
+        }
+    });
+
+    it('should throw an error because no user_id or status is passed to CreateCourse', async()=>{
+        const courseInfo = {
+            title: 'test title',
+            description: 'test description',
+        };
+        try{
+            const course = await CreateCourse(courseInfo);
+        }catch (e) {
+            expect(e).to.be.an('Error');
+            expect(e.message).to.equal('{"user_id":["User id can\'t be blank"],"status":["Status can\'t be blank"]}');
+        }
+    })
+
+    it('should throw an error because no user_id is passed to CreateCourse and status is invalid', async()=>{
+        const courseInfo = {
+            title: 'test title',
+            description: 'test description',
+            status:'sdfasdfa'
+        };
+        try{
+            const course = await CreateCourse(courseInfo);
+        }catch (e) {
+            expect(e).to.be.an('Error');
+            expect(e.message).to.equal('{"user_id":["User id can\'t be blank"],"status":["Status sdfasdfa must be either draft, published, or unpublished"]}');
+        }
+    })
 
 });
 

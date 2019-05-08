@@ -1,7 +1,8 @@
 import React from 'react';
 import {Route} from 'react-router-dom';
 import AdminNav from '../shared/Admin_Nav/Admin_Nav';
-import ContainerCourses from '../Container_Courses/Container_Courses';
+import ContainerCourses from '../Admin_Courses_Container/AdminCoursesContainer';
+import SingleCourseContainer from '../Admin_Single_Course_Container/AdminSingleCourseContainer';
 
 const Admin_Routes = (props) =>{
     return(
@@ -10,7 +11,15 @@ const Admin_Routes = (props) =>{
             <div className={'p:7'}>
                 <Route path={props.match.path + '/users'} render={()=><div>users</div>}/>
                 <Route path={props.match.path + '/courses'} exact component={ContainerCourses}/>
-                <Route path={props.match.path + '/courses/:course'} exact render={()=>{return<div>single course</div>}}/>
+                <Route path={props.match.path + '/courses/:course'} exact
+                       render={
+                           ()=>{
+                               const course_title = props.location.pathname.replace('/admin/courses/', '');
+                               return <SingleCourseContainer course_title={course_title}/>
+                           }
+                       }
+                />
+
                 <Route path={props.match.path + '/videos'} render={()=><div>videos</div>}/>
                 <Route path={props.match.path + '/questions'} render={()=><div>questions</div>}/>
             </div>

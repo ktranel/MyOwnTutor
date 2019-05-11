@@ -15,6 +15,7 @@ const options = {
     password: config.db.password,
     database: config.db.database
 };
+
 const sessionStore = new MySQLStore(options);
 
 const app = express();

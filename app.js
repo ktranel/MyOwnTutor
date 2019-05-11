@@ -15,11 +15,11 @@ const options = {
     password: config.db.password,
     database: config.db.database
 };
-
 const sessionStore = new MySQLStore(options);
 
 const app = express();
 
+app.use(express.static(`${__dirname}/client/build`));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -59,6 +59,11 @@ app.get('/logout', (req, res)=>{
     res.clearCookie('connect.sid');
     return res.status(200).json({message: "User Logged Out"});
 
+});
+
+// this path MUST stay below other route handlers
+app.get('*', (req, res)=>{
+    res.sendFile(path.join(__dirname, './client/build/index.html'));
 });
 
 // catch 404 and forward to error handler

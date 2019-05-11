@@ -3,6 +3,7 @@ import {Route} from 'react-router-dom';
 import AdminNav from '../shared/Admin_Nav/Admin_Nav';
 import ContainerCourses from '../Admin_Courses_Container/AdminCoursesContainer';
 import SingleCourseContainer from '../Admin_Single_Course_Container/AdminSingleCourseContainer';
+import ContainerVideos from '../Admin_Videos_Container/AdminVideosContainer';
 
 const Admin_Routes = (props) =>{
     return(
@@ -20,7 +21,7 @@ const Admin_Routes = (props) =>{
                        }
                 />
 
-                <Route path={props.match.path + '/videos'} render={()=><div>videos</div>}/>
+                <Route path={props.match.path + '/videos'} exact component={ContainerVideos}/>
                 <Route path={props.match.path + '/questions'} render={()=><div>questions</div>}/>
             </div>
         </div>

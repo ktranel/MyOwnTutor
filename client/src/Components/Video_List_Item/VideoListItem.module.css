@@ -1,0 +1,29 @@
+.video-listing{
+    background: #eee;
+    padding:1rem .2rem;
+    margin-bottom: 1rem;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.video-listing:hover{
+    background:#ccc;
+}
+
+.video_meta{
+    text-align: right;
+}
+
+.description{
+    -webkit-transition: max-height .2s ease, height .2s;
+    -moz-transition: max-height.2s ease, height .2s;
+    -ms-transition: max-height.2s ease, height .2s;
+    -o-transition: max-height.2s ease, height .2s;
+    transition: max-height.2s ease, height .2s;
+}
+
+@media only screen and (max-width: 767px) {
+    .video_meta{
+        text-align: left;
+    }
+}

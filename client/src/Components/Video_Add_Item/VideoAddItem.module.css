@@ -1,0 +1,20 @@
+.list_item{
+    background: #fff;
+    border:2px solid #ccc;
+    color: #ccc;
+    padding: 5px;
+    border-radius: 20px;
+    font-weight: 600
+}
+
+.list_item:hover{
+    background:#f23c50;
+    color:#fff;
+    border:2px solid #f23c50;
+}
+
+.list_item.selected{
+    background:#f23c50;
+    color:#fff;
+    border:2px solid #f23c50;
+}

@@ -1,6 +1,7 @@
 import React from 'react';
 import AdminQuestionList from '../Admin_Question_List/AdminQuestionList';
 import {DateTime} from "luxon";
+import {Link} from 'react-router-dom';
 
 const Question_Mock = {
     questions:[
@@ -38,7 +39,7 @@ const AdminQuestionsContainer = () =>{
         <div className={'row'}>
             <div className="col-12">
                 <div className="row">
-                    <div className="col-12 col-md-8"><h5>Questions</h5></div>
+                    <div className="col-12 col-md-8"><h5>Questions <Link to={'questions/new'}><i className="red fas fa-plus-circle"></i></Link></h5></div>
                     <div className="d-none d-sm-none d-md-block col-md-2"><h5>Type</h5></div>
                     <div className="d-none d-sm-none d-md-block col-md-2"><h5>Category</h5></div>
                 </div>

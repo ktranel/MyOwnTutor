@@ -23,6 +23,8 @@ body,
 .yellowBG{ background-color: #FFCB05; }
 .white{ color: #FFFFFF; }
 .whiteBG{ background-color: #FFFFFF; }
+.grey{color:#ccc;}
+.greyBG{background-color:#ccc;}
 .lgtBlue{ color: #4AD9D9; }
 .lgtBlueBG{ background-color: #4AD9D9; }
 .drkBlue{ color: #112f41; }

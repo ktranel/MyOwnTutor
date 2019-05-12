@@ -1,0 +1,21 @@
+.inputfile {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+
+.label{
+    width: 100%;
+    text-align: center;
+    border: 5px #ccc dashed;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.label:hover{
+    background-color: #ccc;
+    color:#fff;
+}

@@ -91,10 +91,6 @@ let course_example = {
 };
 
 class AdminSingleCourseContainer extends Component{
-    constructor(props){
-        super(props);
-    }
-
     renderSections=()=>{
         //need to replace with stateful call
         if(course_example){

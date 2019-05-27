@@ -1,6 +1,7 @@
 const {expect} = require('chai');
 const db = require('../../models');
 const {ValidateUserExists} = require('../../Services/Users/User_Service');
+const proxyquire = require('proxyquire');
 
 describe('User Test Suite', ()=>{
     it('should see if a user already exists on non existent user', async ()=>{
@@ -9,11 +10,19 @@ describe('User Test Suite', ()=>{
     });
 
     it('should see if a user already exists on an existent username', async ()=>{
-        const test = await CreateDummyUser();
-        const user = await ValidateUserExists('test_test', 'test@test.com');
+        // const test = await CreateDummyUser();
+        const test1 = ()=>10;
+        const test2 = ()=>20;
+        const utils = {
+            UsernameExists:test1,
+            EmailExists:test2
+        };
+        const foo = proxyquire('../../Services/Users/User_Service', utils);
+        const user = await foo.ValidateUserExists('test_test', 'test@test.com');
+        // const user = await ValidateUserExists('test_test', 'test@test.com');
         expect(user).to.be.an('object');
         await DestroyDummyUser(test);
-    })
+    });
 
     it('should see if a user already exists on an existent email', async ()=>{
         const test = await CreateDummyUser();

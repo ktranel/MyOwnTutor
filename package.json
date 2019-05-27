@@ -10,7 +10,7 @@
     "client": "npm start --prefix client"
   },
   "dependencies": {
-    "bcrypt": "^3.0.5",
+    "bcrypt": "^3.0.6",
     "concurrently": "^4.1.0",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
@@ -32,11 +32,13 @@
     "react-router-dom": "^5.0.0",
     "react-scripts": "^2.1.8",
     "sequelize": "^5.2.7",
+    "sinon": "^7.3.2",
     "validate.js": "^0.12.0"
   },
   "devDependencies": {
     "chai": "^4.2.0",
     "mocha": "^6.0.2",
-    "nodemon": "^1.18.10"
+    "nodemon": "^1.18.10",
+    "proxyquire": "^2.1.0"
   }
 }

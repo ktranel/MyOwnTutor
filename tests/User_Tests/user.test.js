@@ -1,72 +1,68 @@
 const {expect} = require('chai');
-const db = require('../../models');
-const {ValidateUserExists} = require('../../Services/Users/User_Service');
-const proxyquire = require('proxyquire');
+const User = require('../../Services/Users/User_Service');
 
 describe('User Test Suite', ()=>{
     it('should see if a user already exists on non existent user', async ()=>{
+        //mock data
+        const mock = {
+            UsernameExists: function(username){
+                return new Promise(resolve => resolve(null));
+            },
+            EmailExists: function(email){
+                return new Promise(resolve => resolve(null));
+            }
+        }
+        const ValidateUserExists = User.ValidateUserExistsFacotry(mock);
         const user = await ValidateUserExists('test', 'test@test.com');
          expect(user).to.be.null;
     });
 
     it('should see if a user already exists on an existent username', async ()=>{
-        // const test = await CreateDummyUser();
-        const test1 = ()=>10;
-        const test2 = ()=>20;
-        const utils = {
-            UsernameExists:test1,
-            EmailExists:test2
-        };
-        const foo = proxyquire('../../Services/Users/User_Service', utils);
-        const user = await foo.ValidateUserExists('test_test', 'test@test.com');
-        // const user = await ValidateUserExists('test_test', 'test@test.com');
+        //mock data
+        const mock = {
+            UsernameExists: function(username){
+                return new Promise(resolve => resolve({test:"test"}));
+            },
+            EmailExists: function(email){
+                return new Promise(resolve => resolve(null));
+            }
+        }
+        const ValidateUserExists = User.ValidateUserExistsFacotry(mock);
+        const user = await ValidateUserExists('test_test', 'test@test.com');
         expect(user).to.be.an('object');
-        await DestroyDummyUser(test);
     });
 
     it('should see if a user already exists on an existent email', async ()=>{
-        const test = await CreateDummyUser();
+        const mock = {
+            UsernameExists: function(username){
+                return new Promise(resolve => resolve(null));
+            },
+            EmailExists: function(email){
+                return new Promise(resolve => resolve({test:"test"}));
+            }
+        }
+        const ValidateUserExists = User.ValidateUserExistsFacotry(mock);
         const user = await ValidateUserExists('test_test', 'test@test.com');
         expect(user).to.be.an('object');
-        await DestroyDummyUser(test);
     })
 
     it('should throw an error because no args were passed to see if user exists', async ()=>{
-        let test = null;
         try{
-            test = await CreateDummyUser();
+            const ValidateUserExists = User.ValidateUserExistsFacotry({});
             await ValidateUserExists();
         }catch(e){
             expect(e).to.be.an('Error');
             expect(e.message).to.equal('Invalid number of args passed. Please pass username and email');
-            await DestroyDummyUser(test);
         }
     });
 
     it('should throw an error because 1 arg was passed to see if user exists', async ()=>{
-        let test = null;
         try{
-            test = await CreateDummyUser();
+            const ValidateUserExists = User.ValidateUserExistsFacotry({});
             await ValidateUserExists('test_test');
         }catch(e){
             expect(e).to.be.an('Error');
             expect(e.message).to.equal('Invalid number of args passed. Please pass username and email');
-            await DestroyDummyUser(test);
         }
     });
 });
-
-async function CreateDummyUser(){
-    return await db.user.create({
-        first_name: 'test',
-        last_name: 'test',
-        username: 'test_test',
-        password: 'test_test',
-        email: 'test@test.com',
-        permission_id : 1
-    });
-}
-
-async function DestroyDummyUser(user){
-    return await user.destroy({ force: true });
-}

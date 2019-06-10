@@ -9,10 +9,18 @@ const admin_access = require('../middleware/admin_access');
 const block_curator = require('../middleware/block_curator');
 const block_student = require('../middleware/block_student');
 
+/**
+ Databases
+ */
+const db = require('../models');
+
 /*
 Services
  */
 const User = require('../Services/Users/User_Service');
+const User_DB = require('../Services/Users/User_DB');
+const User_Db_Handler = User_DB(db);
+
 
 //route to create a user
 /*
@@ -59,13 +67,15 @@ router.post('/',  asyncHandler( async (req, res)=>{
     if(validation) return res.status(400).json({error: validation});
 
     //forward user service
-    const found_user = await  User.ValidateUserExists(username, email);
+    const ValidateUserExists = User.ValidateUserExistsFacotry(User_Db_Handler);
+    const found_user = await  ValidateUserExists(username, email);
     if(found_user){
         if(username === found_user.username) return res.status(400).json({error: `Username: ${username} is already taken`});
         if(email === found_user.email) return res.status(400).json({error: `Email: ${email} is already taken`});
     }
 
-    const new_user = await User.CreateNewUser({first_name, last_name, username, password, email, permission_id});
+    const CreateNewUser = User.CreateUserFactory(User_Db_Handler);
+    const new_user = await CreateNewUser({first_name, last_name, username, password, email, permission_id});
 
     return res.status(200).json({user: new_user});
 }));

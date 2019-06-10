@@ -1,10 +1,11 @@
 const {expect} = require('chai');
-const {UsernameExists, EmailExists, CreateUser, FindUser} = require('../../Services/Users/User_DB');
+const User_Db = require('../../Services/Users/User_DB');
 const db = require('../../models');
+const db_handler = User_Db(db);
 
 describe('User DB Test Suite', ()=>{
     it('should see if a username already exists in db', async ()=>{
-        const check = await UsernameExists('');
+        const check = await db_handler.UsernameExists('');
         expect(check).to.be.null;
         expect(check === undefined).to.be.false;
         expect(check === false).to.be.false;
@@ -12,7 +13,7 @@ describe('User DB Test Suite', ()=>{
 
     it('should throw an error because no username was passed', async ()=>{
         try{
-            const check = await UsernameExists();
+            const check = await db_handler.UsernameExists();
         }catch(e){
             expect(e).to.be.an('Error');
             expect(e.message).to.equal('No username was passed as an argument');
@@ -23,14 +24,14 @@ describe('User DB Test Suite', ()=>{
     it('should create a user, see if username already exists, and fail', async ()=>{
         const test = await CreateDummyUser();
 
-        const check = await UsernameExists('test_test');
+        const check = await db_handler.UsernameExists('test_test');
         expect(check).to.be.an('object');
 
         await DestroyDummyUser(test);
     });
 
     it('should see if a email already exists in db', async ()=>{
-        const check = await EmailExists('');
+        const check = await db_handler.EmailExists('');
         expect(check).to.be.null;
         expect(check === undefined).to.be.false;
         expect(check === false).to.be.false;
@@ -38,7 +39,7 @@ describe('User DB Test Suite', ()=>{
 
     it('should throw an error because no email was passed', async ()=>{
         try{
-            const check = await EmailExists();
+            const check = await db_handler.EmailExists();
         }catch(e){
             expect(e).to.be.an('Error');
             expect(e.message).to.equal('No email was passed as an argument');
@@ -49,7 +50,7 @@ describe('User DB Test Suite', ()=>{
     it('should create a user, see if email already exists, and fail', async ()=>{
         const test = await CreateDummyUser();
 
-        const check = await EmailExists('test@test.com');
+        const check = await db_handler.EmailExists('test@test.com');
         expect(check).to.be.an('object');
 
         await DestroyDummyUser(test);
@@ -65,7 +66,7 @@ describe('User DB Test Suite', ()=>{
 
         const args = {first_name, last_name, email, password, username, permission_id};
 
-        const user = await CreateUser(args);
+        const user = await db_handler.CreateUser(args);
 
         //destroy user instance in database because it's a test
         await user.destroy({ force: true });
@@ -87,7 +88,7 @@ describe('User DB Test Suite', ()=>{
             const email = 'test@test.com';
             const password = 'test_test';
             const permission_id = 1;
-            const user = await CreateUser({first_name, last_name, email, password, permission_id});
+            const user = await db_handler.CreateUser({first_name, last_name, email, password, permission_id});
         }catch (e) {
             expect(e).to.be.an('Error');
             expect(e.message).to.equal('Invalid argument: username')
@@ -101,7 +102,7 @@ describe('User DB Test Suite', ()=>{
             const email = 'test@test.com';
             const password = 'test_test';
             const permission_id = 1;
-            const user = await CreateUser({last_name, email,username, password, permission_id});
+            const user = await db_handler.CreateUser({last_name, email,username, password, permission_id});
         }catch (e) {
             expect(e).to.be.an('Error');
             expect(e.message).to.equal('Invalid argument: first_name')
@@ -115,7 +116,7 @@ describe('User DB Test Suite', ()=>{
             const email = 'test@test.com';
             const password = 'test_test';
             const permission_id = 1;
-            const user = await CreateUser({first_name, email,username, password, permission_id});
+            const user = await db_handler.CreateUser({first_name, email,username, password, permission_id});
         }catch (e) {
             expect(e).to.be.an('Error');
             expect(e.message).to.equal('Invalid argument: last_name')
@@ -129,7 +130,7 @@ describe('User DB Test Suite', ()=>{
             const last_name = 'test';
             const email = 'test@test.com';
             const permission_id = 1;
-            const user = await CreateUser({first_name, last_name, email,username, permission_id});
+            const user = await db_handler.CreateUser({first_name, last_name, email,username, permission_id});
         }catch (e) {
             expect(e).to.be.an('Error');
             expect(e.message).to.equal('Invalid argument: password')
@@ -143,7 +144,7 @@ describe('User DB Test Suite', ()=>{
             const last_name = 'test';
             const password = 'test_test';
             const permission_id = 1;
-            const user = await CreateUser({first_name, last_name, password,username, permission_id});
+            const user = await db_handler.CreateUser({first_name, last_name, password,username, permission_id});
         }catch (e) {
             expect(e).to.be.an('Error');
             expect(e.message).to.equal('Invalid argument: email')
@@ -156,7 +157,7 @@ describe('User DB Test Suite', ()=>{
             const last_name = 'test';
             const password = 'test_test';
             const email = 'test@test.com';
-            const user = await CreateUser({first_name, last_name, password,username, email});
+            const user = await db_handler.CreateUser({first_name, last_name, password,username, email});
 
         //destroy user instance in database because it's a test
         await user.destroy({ force: true });
@@ -178,7 +179,7 @@ describe('User DB Test Suite', ()=>{
             const password = 'test_test';
             const email = 'test@test.com';
             const permission_id = 'sflkjflkdsj';
-            const user = await CreateUser({first_name, last_name, password,username, email, permission_id});
+            const user = await db_handler.CreateUser({first_name, last_name, password,username, email, permission_id});
         }catch(e){
             expect(e).to.be.an('Error');
             expect(e.message).to.equal('Invalid argument: permission_id not found')
@@ -192,7 +193,7 @@ describe('User DB Test Suite', ()=>{
         const password = 'test_test';
         const email = 'test@test.com';
         const permission_id = 1;
-        const user = await CreateUser({first_name, last_name, password,username, email, permission_id});
+        const user = await db_handler.CreateUser({first_name, last_name, password,username, email, permission_id});
 
         //destroy user instance in database because it's a test
         await user.destroy({ force: true });
@@ -209,7 +210,7 @@ describe('User DB Test Suite', ()=>{
     it('should return a user based on their id', async()=>{
         const user = await CreateDummyUser();
 
-        const found = await FindUser(user.id);
+        const found = await db_handler.FindUser(user.id);
 
         await DestroyDummyUser(user);
         expect(found).to.be.an('object');
@@ -223,7 +224,7 @@ describe('User DB Test Suite', ()=>{
     it('should throw an error when finind a user by id , because no user_id is passed', async()=>{
         const user = await CreateDummyUser();
         try{
-            await FindUser();
+            await db_handler.FindUser();
         }catch(e){
             await DestroyDummyUser(user);
             expect(e).to.be.an('Error');
@@ -234,7 +235,7 @@ describe('User DB Test Suite', ()=>{
     it('should return a user based on their username', async()=>{
         const user = await CreateDummyUser();
 
-        const found = await FindUser(user.username);
+        const found = await db_handler.FindUser(user.username);
 
         await DestroyDummyUser(user);
         expect(found).to.be.an('object');

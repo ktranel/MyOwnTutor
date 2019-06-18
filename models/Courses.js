@@ -8,7 +8,7 @@ module.exports= (sequelize, Datatypes)=>{
                 autoIncrement:true
             },
             user_id:{
-                //fk from the user table
+                //key from the user table
                 type: Datatypes.UUID,
                 required:true,
                 allowNull:false

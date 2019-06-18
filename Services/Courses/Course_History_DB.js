@@ -1,6 +1,6 @@
 module.exports = (db) => {
     return {
-        CreateHistory: async (options) => {
+        createHistory: async (options) => {
             if(!options.user_id) throw new Error('Argument Error: options.user_id required');
             if(!options.course_id) throw new Error('Argument Error: options.course_id required');
             return await db.course_history.create({
@@ -11,7 +11,7 @@ module.exports = (db) => {
                 version: 1
             })
         },
-        Latest: async (course_id) => {
+        latest: async (course_id) => {
             const courses =  await db.course_history.findAll({
                 where: {course_id},
                 limit: 1,
@@ -23,7 +23,7 @@ module.exports = (db) => {
     }
 };
 
-function _ResolveStatus(status){
+function _resolveStatus(status){
     status = status.toLowerCase();
     switch(status){
         case 'draft':

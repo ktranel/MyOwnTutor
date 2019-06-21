@@ -4,6 +4,8 @@ const validate = require('validate.js');
 // Services
 const coursedB = require('../Services/Courses/Course_DB');
 const courseService = require('../Services/Courses/Course');
+const historyDb = require('../Services/Courses/Course_History_DB');
+const courseHistory = require('../Services/Courses/CourseHistory');
 
 const router = express.Router();
 const asyncHandler = require('../Helpers/asyncHandler');
@@ -11,10 +13,14 @@ const asyncHandler = require('../Helpers/asyncHandler');
 // databases
 const db = require('../models');
 
-// factories
+// course factories
 const coursedBHandler = coursedB(db);
 const lookup = courseService.lookupFactory(coursedBHandler);
 const createCourse = courseService.createFactory(coursedBHandler);
+
+// history factories
+const historyDbHandler = historyDb(db);
+const createHistory = courseHistory.versionFactory(historyDbHandler);
 
 /*
 Route to create a new course
@@ -47,7 +53,19 @@ router.post('/', asyncHandler(async (req, res) => {
     if (found) return res.status(400).json({ error: `Course with title '${title}' already exists` });
 
     // create course
-    const course = await createCourse({ title, user_id: user.id, description });
+    let course = await createCourse({ title, user_id: user.id, description });
+
+    // create course version history
+    const params = {
+        course_id: course.id,
+        user_id: user.id,
+        title: course.title,
+        description: course.description,
+        version: 1,
+        status: course.status,
+    };
+    const history = await createHistory(params);
+    course.version = history.version;
     return res.status(200).json({ course });
 }));
 

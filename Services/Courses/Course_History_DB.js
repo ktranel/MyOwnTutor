@@ -6,8 +6,9 @@ module.exports = (db) => {
             return await db.course_history.create({
                 user_id: options.user_id,
                 course_id: options.course_id,
+                title: options.title,
                 description: options.description || null,
-                status: _ResolveStatus(options.status),
+                status: _resolveStatus(options.status),
                 version: 1
             })
         },
@@ -24,7 +25,7 @@ module.exports = (db) => {
 };
 
 function _resolveStatus(status){
-    status = status.toLowerCase();
+    if(typeof status === "string") status = status.toLowerCase();
     switch(status){
         case 'draft':
             return 1;

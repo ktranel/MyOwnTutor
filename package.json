@@ -3,8 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "lint": "eslint",
     "start": "node ./bin/www",
-    "debug": "nodemon --inspect-brk ./bin/www",
+    "debug": "nodemon --inspect ./bin/www",
     "dev": "concurrently \"npm run debug\" \"npm run client\"",
     "frontDev": "concurrently \"npm run start\" \"npm run client\"",
     "client": "npm start --prefix client"
@@ -37,6 +38,11 @@
   },
   "devDependencies": {
     "chai": "^4.2.0",
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-import": "^2.17.3",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
+    "eslint-plugin-react": "^7.13.0",
     "mocha": "^6.0.2",
     "nodemon": "^1.18.10",
     "proxyquire": "^2.1.0"

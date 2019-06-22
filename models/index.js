@@ -36,14 +36,26 @@ db.Sequelize = Sequelize;
 
 //ASSOCIATIONS
 
-/*COURSE SERVICE*/
+/*************-----------------*******
+ ************| COURSE SERVICE |*********
+ ************-----------------********/
 //Courses
 db.course.hasMany(db.course_history);
+db.course.hasMany(db.course_section);
 
 //Course History
 db.course_history.belongsTo(db.course);
 
-/*USER SERVICE*/
+//Course Sections
+db.course_section.belongsTo(db.course);
+db.course_section.belongsTo(db.section);
+
+//Section
+db.section.hasMany(db.course_section);
+
+/************---------------*********
+************| USER SERVICE |*********
+************---------------**********/
 //Permissions
 db.permission.hasMany(db.user);
 

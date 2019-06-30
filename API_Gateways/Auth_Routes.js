@@ -4,9 +4,9 @@ const passport = require('passport');
 
 //Auth route
 router.post('/', (req, res, next)=>{
-    if(req.isAuthenticated()){
+    if (req.isAuthenticated()){
         req.logout();
-        req.session.destroy();
+        if (req.session) req.session.destroy();
         res.clearCookie('connect.sid');
     }
     next();

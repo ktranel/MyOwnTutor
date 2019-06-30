@@ -34,7 +34,7 @@
     "react-scripts": "^2.1.8",
     "sequelize": "^5.2.7",
     "sinon": "^7.3.2",
-    "validate.js": "^0.12.0"
+    "validate.js": "^0.13.1"
   },
   "devDependencies": {
     "chai": "^4.2.0",

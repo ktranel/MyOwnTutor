@@ -1,17 +1,22 @@
-const createSectionFactory = dbHandler => async ({ title, user_id }) => {
-    if(!dbHandler.create) throw new Error('db handler must have property create');
-    return dbHandler.create({title, user_id});
+module.exports = (dbHandler) =>  {
+    return {
+        create: async ({ title, userId, courseId }) => {
+            if (!dbHandler.create) throw new Error('db handler must have property create');
+            return dbHandler.create({ title, userId, courseId });
+        },
+        /* @args
+            - options : object
+                - title
+                - id
+        */
+        get: async (options) => {
+            // validation
+            if (!dbHandler.get) throw new Error('dbHandler must have property get');
+            return dbHandler.get(options);
+        },
+        assign: async (courseId, sectionId) =>{
+            if (!dbHandler.assign) throw new Error('dbHandler must have a property of assign');
+            return dbHandler.assign(courseId, sectionId);
+        },
+    };
 };
-
-const assignSection = dbHandler => async (section_id, course_id) =>{
-    //validation
-    if (!section_id) throw new Error('arg error: section_id is required');
-    if (!course_id) throw new Error('arg error: course_id is required');
-
-
-};
-
-module.exports = {
-    createSectionFactory,
-};
-

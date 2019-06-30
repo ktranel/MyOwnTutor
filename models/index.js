@@ -52,6 +52,14 @@ db.course_section.belongsTo(db.section);
 
 //Section
 db.section.hasMany(db.course_section);
+db.section.hasMany(db.video);
+
+// Section Video
+db.section_video.belongsTo(db.section);
+db.section_video.belongsTo(db.video);
+
+// Video
+db.video.hasMany(db.section_video);
 
 /************---------------*********
 ************| USER SERVICE |*********

@@ -10,5 +10,10 @@ module.exports = (dbHandler) => {
             // create question
             return dbHandler.create(title, hostId, userId);
         },
+        get: async ({ id, title }) => {
+            if (!dbHandler.get) throw new Error('dbHandler must have property get');
+            if (!title && !id) throw new Error('title or id property not present on option arg');
+            return dbHandler.get({ title, id });
+        },
     };
 };

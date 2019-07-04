@@ -37,4 +37,24 @@ module.exports = db => ({
         }
         return null;
     },
+    getQuestions: async (id) => {
+        if (!id) throw new Error('arg error: id');
+        return db.section_question.findAll({
+            where: { section_id: id },
+        });
+    },
+    getVideos: async (id) => {
+        if (!id) throw new Error('arg error: id');
+        return db.section_video.findAll({
+            where: { section_id: id },
+        });
+    },
+    assignVideo: async (sectionId, videoId) => {
+        if (!sectionId) throw new Error('arg error: sectionId must be defined');
+        if (!videoId) throw new Error('arg error: videoId must be defined');
+        return db.section_video.create({
+            section_id: sectionId,
+            video_id: videoId,
+        });
+    },
 });

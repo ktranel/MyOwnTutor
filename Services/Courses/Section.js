@@ -14,9 +14,25 @@ module.exports = (dbHandler) =>  {
             if (!dbHandler.get) throw new Error('dbHandler must have property get');
             return dbHandler.get(options);
         },
-        assign: async (courseId, sectionId) =>{
+        assign: async (courseId, sectionId) => {
             if (!dbHandler.assign) throw new Error('dbHandler must have a property of assign');
             return dbHandler.assign(courseId, sectionId);
+        },
+        getQuestions: async (id) => {
+            if (!dbHandler.getQuestions) throw new Error('dbHandler must have getQuestions property');
+            if (!id) throw new Error('arg error: getQuestions expects id argument');
+            return dbHandler.getQuestions(id);
+        },
+        getVideos: async (id) => {
+            if (!dbHandler.getVideos) throw new Error('dbHandler must have getVideos property');
+            if (!id) throw new Error('arg error: getQuestions expects id argument');
+            return dbHandler.getVideos(id);
+        },
+        assignVideo: async (sectionId, videoId) =>{
+            if (!dbHandler.assignVideo) throw new Error('dbHandler must have property assignVideo');
+            if (!sectionId) throw new Error('arg error: sectionId must be defined');
+            if (!videoId) throw new Error('arg error: videoId must be defined');
+            return dbHandler.assignVideo(sectionId, videoId);
         },
     };
 };

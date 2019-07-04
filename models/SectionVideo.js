@@ -6,7 +6,7 @@ module.exports = (sequelize, Datatypes) => sequelize.define('section_video', {
         primaryKey: true,
         autoIncrement: true,
     },
-    course_id: {
+    video_id: {
         // fk from the course table
         type: Datatypes.INTEGER,
         required: true,

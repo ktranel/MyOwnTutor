@@ -66,14 +66,12 @@ module.exports = (db) => {
         /* Function to get all courses
             * Takes in optional ids parameter  to only
             * get courses from a specific array of ids. */
-        get: async (ids, page) => {
+        get: async (page) => {
             const limit = 20; // number of records per page
-            page = page || 1; // page number, default to 1
             const count = await db.course.findAndCountAll();
             const pages = Math.ceil(count / limit);
             const offset = limit * (page - 1);
             const query = { limit, offset };
-            if (ids) query.where = { id: ids };
             const courses = await db.course.findAll(query);
             return {
                 pages, count, page, courses,

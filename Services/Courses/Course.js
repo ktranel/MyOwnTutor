@@ -12,5 +12,10 @@ module.exports = (courseDb) => {
             if (!option.id && !option.title) throw new Error('Invalid arg: either option.id or option.title must be valid');
             return courseDb.lookup({ id: option.id, title: option.title });
         },
+        get: async (page) => {
+            if (!courseDb.get) throw new Error('arg error: no get property on database handler');
+            const pageNumber = page ? parseInt(page, 10) : 1;
+            return courseDb.get(pageNumber);
+        },
     };
 };

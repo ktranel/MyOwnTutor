@@ -57,4 +57,12 @@ module.exports = db => ({
             video_id: videoId,
         });
     },
+    assignQuestion: async (sectionId, questionId) => {
+        if (!sectionId) throw new Error('arg error: sectionId must be defined');
+        if (!questionId) throw new Error('arg error: questionId must be defined');
+        return db.section_question.create({
+            section_id: sectionId,
+            question_id: questionId,
+        });
+    },
 });

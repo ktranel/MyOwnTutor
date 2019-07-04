@@ -167,7 +167,34 @@ router.post('/section/video', blockStudent, asyncHandler(async (req, res) => {
     - questionId : int
  */
 router.post('/section/question', blockStudent, asyncHandler( async (req, res) => {
-    
+    // get post body
+    const { sectionId, questionId } = req.body;
+    // validation
+    const constraints = {
+        sectionId: {
+            presence: true,
+            type: 'integer',
+        },
+        questionId: {
+            presence: true,
+            type: 'integer',
+        },
+    };
+    const validation = validate({ sectionId, questionId }, constraints);
+    if (validation) return res.status(400).json({ error: validation });
+    // make sure section exists
+    const section = await Section.get({ id: sectionId });
+    if (!section) return res.status(400).json({ error: 'Section id is invalid or could not be found' });
+    // make sure the question exists
+    const question = await Question.get({ id: questionId });
+    if (!question) return res.status(400).json({ error: 'Question id is invalid or could not be found' });
+    // make sure question isn't already assigned to section
+    const questionList = await Section.getQuestions(sectionId);
+    const found = questionList.filter(item => item.question_id === question.id);
+    if (found.length !== 0) return res.status(400).json({ error: 'question is already assigned to section' });
+    // assign question to section
+    const sectionQuestion = await Section.assignQuestion(section.id, question.id);
+    return res.status(200).json({ success: sectionQuestion });
 }))
 
 /* Route to get a course or list of courses at 20/page
@@ -188,7 +215,7 @@ router.get('/', asyncHandler(async (req, res) => {
         courses = await Course.get(page);
     } else {
         courses = await Course.lookup({ id });
-        courses = [...courses];
+        courses = [courses];
     }
 
     // package course objects
@@ -200,10 +227,11 @@ router.get('/', asyncHandler(async (req, res) => {
                         return new Promise((resolve1) => {
                             const questionPromises = Section.getQuestions(section.id);
                             const videoPromises = Section.getVideos(section.id);
-                            const contentPromises = questionPromises.concat(videoPromises);
+                            const contentPromises = [questionPromises, videoPromises];
                             Promise.all(contentPromises)
                                 .then((contentList) => {
-                                    const contentPromises2 = contentList.map((content) => {
+                                    const list = [...contentList[0], ...contentList[1]];
+                                    const contentPromises2 = list.map((content) => {
                                         return new Promise((resolve2) => {
                                             if (content.video_id){
                                                 Video.get({ id: content.video_id })

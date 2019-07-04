@@ -34,5 +34,11 @@ module.exports = (dbHandler) =>  {
             if (!videoId) throw new Error('arg error: videoId must be defined');
             return dbHandler.assignVideo(sectionId, videoId);
         },
+        assignQuestion: async (sectionId, questionId) =>{
+            if (!dbHandler.assignQuestion) throw new Error('dbHandler must have property assignQuestion');
+            if (!sectionId) throw new Error('arg error: sectionId must be defined');
+            if (!questionId) throw new Error('arg error: questionId must be defined');
+            return dbHandler.assignQuestion(sectionId, questionId);
+        },
     };
 };

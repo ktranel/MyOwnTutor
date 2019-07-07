@@ -56,7 +56,7 @@ module.exports = (db) => {
             const course = await db.course.findOne({
                 where: { id },
             });
-            return await course.update({ status });
+            return course.update({ status });
         },
         remove: async (id) => {
             const course = await db.findOne({ where: { id } });

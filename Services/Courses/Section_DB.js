@@ -55,6 +55,12 @@ module.exports = (db) => {
                 where: {section_id: id},
             });
         },
+        getCourseAssignment: async (sectionId) => {
+            await db.course_section.findAll({
+                where: { section_id: sectionId },
+            });
+        },
+        getCourseMaxSection: async courseId => db.course_section.max('place', { where: { course_id: courseId } }),
         assignVideo: async (sectionId, videoId) => {
             if (!sectionId) throw new Error('arg error: sectionId must be defined');
             if (!videoId) throw new Error('arg error: videoId must be defined');
@@ -71,18 +77,7 @@ module.exports = (db) => {
                 question_id: questionId,
             });
         },
-        updatePlace: async(sectionId, place, courseId) => {
-            if (!courseId) {
-                const assignment = await db.course_section.findAll({
-                    where: { section_id: sectionId },
-                });
-                if (assignment.length > 1) throw new Error('This section is assigned to multiple courses. Please provide courseId option');
-                if (assignment[0]) courseId = assignment[0].course_id;
-            }
-            // prevent entry of a place above the max value of the highest place
-            let max = await db.course_section.max('place', { where: { course_id: courseId } });
-            if (!max) max = 1;
-            if (place > max + 1) place = max + 1;
+        updatePlace: async (sectionId, place, courseId) => {
             // update any sections greater than the current sections place
             const sectionList = await db.course_section.findAll({
                 where: {
@@ -90,15 +85,15 @@ module.exports = (db) => {
                     place: { [Op.gte]: place },
                 },
             });
-            const sectionPromises = sectionList.map(section => {
+            const sectionPromises = sectionList.map((section) => {
                 return new Promise((resolve) => {
-                    section.updateAttributes({ place: section.place + 1 })
+                    section.update({ place: section.place + 1 })
                         .then(() => resolve());
                 });
             });
             await Promise.all(sectionPromises);
             const section = await this.get({ id: sectionId });
-            return section.updateAttributes({ place });
+            return section.update({ place });
         },
     };
 };

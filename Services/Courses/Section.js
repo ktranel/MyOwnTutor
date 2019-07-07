@@ -42,5 +42,17 @@ module.exports = (dbHandler) =>  {
             if (!questionId) throw new Error('arg error: questionId must be defined');
             return dbHandler.assignQuestion(sectionId, questionId);
         },
+        updatePlace: async (sectionId, place, courseId) => {
+            if (!courseId) {
+                const assignment = await dbHandler.getCourseAssignment(sectionId);
+                if (assignment.length > 1) throw new Error('This section is assigned to multiple courses. Please provide courseId option');
+                if (assignment[0]) courseId = assignment[0].course_id;
+            }
+            // prevent entry of a place above the max value of the highest place
+            let max = await dbHandler.getCourseMaxSection(courseId);
+            if (!max) max = 1;
+            if (place > max + 1) place = max + 1;
+            return dbHandler.updatePlace(sectionId, place, courseId);
+        },
     };
 };

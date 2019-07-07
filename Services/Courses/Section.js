@@ -1,13 +1,15 @@
 module.exports = (dbHandler) =>  {
     return {
-        create: async ({ title, userId, courseId }) => {
+        create: async ({ title, userId, courseId, place }) => {
             if (!dbHandler.create) throw new Error('db handler must have property create');
-            return dbHandler.create({ title, userId, courseId });
+            if (!place) place = 1;
+            return dbHandler.create({ title, userId, courseId, place });
         },
         /* @args
             - options : object
                 - title
-                - id
+                - userId
+                - courseId
         */
         get: async (options) => {
             // validation

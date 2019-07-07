@@ -1,7 +1,7 @@
 module.exports = (db) => {
     const { Op } = db.Sequelize;
     return {
-        create: async ({ title, userId, courseId }) => {
+        create: async ({ title, userId, courseId, place }) => {
             if (!title) throw new Error('arg error: title is required');
             if (!userId) throw new Error('arg error: userId is required');
             if (!courseId) throw new Error('arg error: courseId is required');
@@ -10,17 +10,15 @@ module.exports = (db) => {
                 title,
                 user_id: userId,
                 course_id: courseId,
+                place,
             });
         },
         assign: async (courseId, sectionId) => {
             if (!courseId) throw new Error('invalid arg: courseId');
             if (!sectionId) throw new Error('invalid arg: sectionId');
-            let place = await db.course_section.max('place', { where: { course_id: courseId } });
-            if (!place) place = 1;
             return db.course_section.create({
                 course_id: courseId,
                 section_id: sectionId,
-                place,
             });
         },
         get: async (options) => {
@@ -56,11 +54,10 @@ module.exports = (db) => {
             });
         },
         getCourseAssignment: async (sectionId) => {
-            await db.course_section.findAll({
+            return db.course_section.findAll({
                 where: { section_id: sectionId },
             });
         },
-        getCourseMaxSection: async courseId => db.course_section.max('place', { where: { course_id: courseId } }),
         assignVideo: async (sectionId, videoId) => {
             if (!sectionId) throw new Error('arg error: sectionId must be defined');
             if (!videoId) throw new Error('arg error: videoId must be defined');
@@ -77,21 +74,7 @@ module.exports = (db) => {
                 question_id: questionId,
             });
         },
-        updatePlace: async (sectionId, place, courseId) => {
-            // update any sections greater than the current sections place
-            const sectionList = await db.course_section.findAll({
-                where: {
-                    course_id: courseId,
-                    place: { [Op.gte]: place },
-                },
-            });
-            const sectionPromises = sectionList.map((section) => {
-                return new Promise((resolve) => {
-                    section.update({ place: section.place + 1 })
-                        .then(() => resolve());
-                });
-            });
-            await Promise.all(sectionPromises);
+        updatePlace: async (sectionId, place) => {
             const section = await this.get({ id: sectionId });
             return section.update({ place });
         },

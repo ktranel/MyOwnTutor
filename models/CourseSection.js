@@ -18,11 +18,6 @@ module.exports = (sequelize, Datatypes) => sequelize.define('course_section', {
         allowNull: false,
         required: true,
     },
-    place: {
-        type: Datatypes.INTEGER,
-        allowNull: false,
-        required: true,
-    },
     updated_at: { type: Datatypes.DATE },
 },
 {

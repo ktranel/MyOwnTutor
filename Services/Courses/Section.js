@@ -1,8 +1,9 @@
 module.exports = (dbHandler) =>  {
     return {
-        create: async ({ title, userId, courseId, place }) => {
+        create: async ({ title, userId, courseId }) => {
             if (!dbHandler.create) throw new Error('db handler must have property create');
-            if (!place) place = 1;
+            const sections = await dbHandler.get({ courseId });
+            const place = sections.length + 1;
             return dbHandler.create({ title, userId, courseId, place });
         },
         /* @args
@@ -18,6 +19,8 @@ module.exports = (dbHandler) =>  {
         },
         assign: async (courseId, sectionId) => {
             if (!dbHandler.assign) throw new Error('dbHandler must have a property of assign');
+            const found = await dbHandler.getCourseAssignment(sectionId);
+            if (found.length > 0 ) throw new Error('Section is already assigned to a course');
             return dbHandler.assign(courseId, sectionId);
         },
         getQuestions: async (id) => {
@@ -42,17 +45,20 @@ module.exports = (dbHandler) =>  {
             if (!questionId) throw new Error('arg error: questionId must be defined');
             return dbHandler.assignQuestion(sectionId, questionId);
         },
-        updatePlace: async (sectionId, place, courseId) => {
-            if (!courseId) {
-                const assignment = await dbHandler.getCourseAssignment(sectionId);
-                if (assignment.length > 1) throw new Error('This section is assigned to multiple courses. Please provide courseId option');
-                if (assignment[0]) courseId = assignment[0].course_id;
-            }
-            // prevent entry of a place above the max value of the highest place
-            let max = await dbHandler.getCourseMaxSection(courseId);
-            if (!max) max = 1;
-            if (place > max + 1) place = max + 1;
-            return dbHandler.updatePlace(sectionId, place, courseId);
+        updatePlace: async (sectionId, place) => {
+            // get all section in this course
+            let sections = await dbHandler.getCourseAssignment(sectionId);
+            sections = sections.sort((a, b) => a.place - b.place);
+            // remove any sections that have a place < the insertion place
+            sections = sections.filter(section => section.place >= place);
+
+            const sectionPromises = sections.map((section) => {
+                return new Promise((resolve) => {
+                    dbHandler.updatePlace(section.id, section.place + 1).then(() => resolve());
+                });
+            });
+            await Promise.all(sectionPromises);
+            return dbHandler.updatePlace(sectionId, place);
         },
     };
 };

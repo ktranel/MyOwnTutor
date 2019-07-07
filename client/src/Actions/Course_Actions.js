@@ -39,3 +39,13 @@ export const GetCourses = (user) =>{
 
     }
 }
+
+// Get list of courses for admins/curators
+export  const ADMIN_COURSES = 'ADMIN_COURSES';
+export const adminCourses = () => {
+    return async (dispatch)=>{
+        const courses = await axios.get('/course');
+        console.log(courses);
+        dispatch({type: ADMIN_COURSES, payload: courses})
+    }
+}

@@ -25,7 +25,7 @@ Returns user if username already taken, false otherwise.
         @returns user object
          */
         async FindUser(credential) {
-            if (!credential) throw new Error('Invalid argument: user_id');
+            if (!credential) throw new Error('Invalid argument: credential');
             const user = await db.user.findOne({
                 where: {
                     [Op.or]: [

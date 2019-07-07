@@ -1,5 +1,6 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
+import {DateTime} from "luxon";
 import styles from './AdminCourseList.module.css';
 
 const AdminCourseList = ({courses}) =>{
@@ -16,7 +17,7 @@ const AdminCourseList = ({courses}) =>{
                                     <p>{course.description}</p>
                                 </div>
                                 <div className={`${styles.course_meta} col-12 col-md-6`}>
-                                    <div>Last Edit: {course.last_edited}</div>
+                                    <div>Last Edit: {DateTime.local().toLocaleString(course.last_edited)}</div>
                                     <div>Status: {course.status}</div>
                                 </div>
                             </div>

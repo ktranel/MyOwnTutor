@@ -15,6 +15,8 @@ const videoDb = require('../Services/Content/Video_DB');
 const videoDbHandler = videoDb(db);
 const questionDb = require('../Services/Content/Question_DB');
 const questionDbHandler = questionDb(db);
+const userDb = require('../Services/Users/User_DB');
+const userDbHandler = userDb(db);
 
 // Middlewares
 const blockStudent = require('../middleware/block_student');
@@ -34,6 +36,9 @@ const Video = videoService(videoDbHandler);
 
 const questionService = require('../Services/Content/Question');
 const Question = questionService(questionDbHandler);
+
+const userService = require('../Services/Users/User_Service');
+const User = userService(userDbHandler);
 
 const router = express.Router();
 const asyncHandler = require('../Helpers/asyncHandler');
@@ -210,27 +215,43 @@ router.get('/', asyncHandler(async (req, res) => {
     if (!page) page = 1;
 
     // get ids of courses based on page if not provided
-    let courses;
+    let courses; let pages; let  count;
     if (!id) {
-        courses = await Course.get(page);
+        const results = await Course.get(page);
+        courses = results.courses;
+        pages = results.pages;
+        page = results.page;
+        count = results.count;
+
     } else {
         courses = await Course.lookup({ id });
         courses = [courses];
     }
 
+    /* TODO: change into async/await for readability and test performance drop
+    *  while this is no doubt a long chain of promises it ensures that a call to resolve
+    * a large number of courses at once is scalable */
+
     // package course objects
+    // create initial course promise array
     const promises = courses.map((course) => {
         return new Promise((resolve) => {
+            // get all the sections for each course
             Section.get({ courseId: course.id })
                 .then((sectionList) => {
+                    // create promise array for each section
                     const sectionPromises = sectionList.map((section) => {
                         return new Promise((resolve1) => {
+                            // get all section questions and videos
                             const questionPromises = Section.getQuestions(section.id);
                             const videoPromises = Section.getVideos(section.id);
                             const contentPromises = [questionPromises, videoPromises];
+                            // resolve 3rd promise array that gets all content assigned to sections
                             Promise.all(contentPromises)
                                 .then((contentList) => {
+                                    // parse content lists and get either a video or a question
                                     const list = [...contentList[0], ...contentList[1]];
+                                    // create 4th promise array to get questions and videos
                                     const contentPromises2 = list.map((content) => {
                                         return new Promise((resolve2) => {
                                             if (content.video_id){
@@ -242,6 +263,7 @@ router.get('/', asyncHandler(async (req, res) => {
                                             }
                                         });
                                     });
+                                    // resolve 4th promise array to get questions and videos
                                     Promise.all(contentPromises2)
                                         .then((newContentList) => {
                                             const returnSection = {
@@ -253,13 +275,43 @@ router.get('/', asyncHandler(async (req, res) => {
                                 });
                         });
                     });
+                    // resolve 2nd promise array of each section
                     Promise.all(sectionPromises)
-                        .then(sections => resolve({ course, sections }));
+                        .then(sections => {
+                            const newCourse = {
+                                id: course.id,
+                                user_id: course.user_id,
+                                title: course.title,
+                                description: course.description,
+                                status: course.status,
+                                last_edited: course.updated_at,
+                                sections,
+                            };
+                            resolve(newCourse);
+                        });
                 });
         });
     });
-    const resolveEverything = await Promise.all(promises);
-    return res.status(200).json({ resolveEverything });
+    // set entire promise chain into motion
+    let allCourses = await Promise.all(promises);
+
+    // get user info for courses
+    const userPromises = allCourses.map((course) => {
+        return new Promise((resolve) => {
+            User.userSearch(course.user_id)
+                .then((user) => {
+                    const modified = course;
+                    modified.user = {
+                        firstName: user.first_name,
+                        last_name: user.last_name,
+                    };
+                    return resolve(modified);
+                });
+        });
+    });
+    allCourses = await Promise.all(userPromises);
+    if (!id) return res.status(200).json({ result: allCourses, pages, count, page });
+    return res.status(200).json({ result: allCourses});
 }));
 
 module.exports = router;

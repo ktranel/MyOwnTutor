@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { Component } from 'react';
 import AdminCourseList from '../Admin_Course_List/AdminCourseList';
+import { adminCourses} from "../../Actions/Course_Actions";
+import { connect } from "react-redux";
 
 const courseMock = {
     courses: [
@@ -33,13 +35,23 @@ const courseMock = {
 };
 
 
-const ContainerCourses = () =>{
-    return(
-       <div>
-           <h3 className={`lgtBlue`}>Courses <i className="red fas fa-plus-circle"></i></h3>
-           <AdminCourseList courses={courseMock.courses}/>
-       </div>
-    )
-};
+class ContainerCourses extends Component{
+    componentDidMount() {
+        this.props.adminCourses();
+    }
 
-export default ContainerCourses;
+    render(){
+        return(
+            <div>
+                <h3 className={`lgtBlue`}>Courses <i className="red fas fa-plus-circle"> </i></h3>
+                <AdminCourseList courses={this.props.adminCourseList}/>
+            </div>
+        )
+    }
+};
+const mapStateToProps = ({ adminCourseList }) =>{
+    return {
+        adminCourseList
+    }
+}
+export default connect(mapStateToProps, {adminCourses})(ContainerCourses);

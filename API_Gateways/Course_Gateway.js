@@ -257,22 +257,47 @@ router.get('/', asyncHandler(async (req, res) => {
                     Promise.all(contentPromises)
                         .then((contentList) => {
                             // parse content lists and get either a video or a question
-                            const list = [...contentList[0], ...contentList[1]];
+                            const  list = [...contentList[0], ...contentList[1]];
                             // create 4th promise array to get questions and videos
                             const contentPromises2 = list.map(content => new Promise((resolve2) => {
                                 if (content.video_id) {
                                     Video.get({ id: content.video_id })
-                                        .then(video => resolve2(video));
+                                        .then(video => {
+                                            const modified = {
+                                                id: video.id,
+                                                title: video.title,
+                                                format: 'video',
+                                                userId: video.user_id,
+                                                lastEdited: video.updated_at,
+                                                createdAt: video.created_at,
+                                            }
+                                            return resolve2(modified);
+                                        });
                                 } else {
                                     Question.get({ id: content.question_id })
-                                        .then(question => resolve2(question));
+                                        .then(question => {
+                                            const modified = {
+                                                id: question.id,
+                                                title: question.title,
+                                                format: 'question',
+                                                type: question.type,
+                                                userId: question.user_id,
+                                                lastEdited: question.updated_at,
+                                                createdAt: question.created_at,
+                                            }
+                                            return resolve2(modified);
+                                        });
                                 }
                             }));
                             // resolve 4th promise array to get questions and videos
                             Promise.all(contentPromises2)
                                 .then((newContentList) => {
                                     const returnSection = {
-                                        section,
+                                        id: section.id,
+                                        title: section.title,
+                                        place: section.place,
+                                        lastEdited: section.updated_at,
+                                        created: section.created_at,
                                         content: newContentList,
                                     };
                                     return resolve1(returnSection);

@@ -42,10 +42,15 @@ export const GetCourses = (user) =>{
 
 // Get list of courses for admins/curators
 export  const ADMIN_COURSES = 'ADMIN_COURSES';
-export const adminCourses = () => {
+export const adminCourses = ({courseId, title}) => {
     return async (dispatch)=>{
-        const courses = await axios.get('/course');
-        console.log(courses);
-        dispatch({type: ADMIN_COURSES, payload: courses})
+        let url = '/course';
+        if (courseId) url = `/course?courseId=${courseId}`;
+        if (title) url = `/course?title=${title}`;
+        const courses = await axios.get(url);
+        dispatch({ type: ADMIN_COURSES, payload: courses })
     }
-}
+};
+
+export const ADMIN_COURSES_CLEAR = 'ADMIN_COURSES_CLEAR';
+export const adminCoursesClear = () => dispatch => dispatch({ type: ADMIN_COURSES_CLEAR , payload: [] });

@@ -1,43 +1,15 @@
 import React, { Component } from 'react';
 import AdminCourseList from '../Admin_Course_List/AdminCourseList';
-import { adminCourses} from "../../Actions/Course_Actions";
+import { adminCourses, adminCoursesClear} from "../../Actions/Course_Actions";
 import { connect } from "react-redux";
-
-const courseMock = {
-    courses: [
-        {
-            id:1,
-            title: 'General Chemistry 1',
-            description: 'A general review of chemistry. Geared towards first year chemistry students',
-            status: 'published',
-            author: 'Kyle Tranel',
-            last_edited: '01/01/2018'
-        },
-        {
-            id:2,
-            title: 'General Chemistry 2',
-            description: 'A general review of chemistry. Geared towards first year chemistry students',
-            status: 'published',
-            author: 'Kyle Tranel',
-            last_edited: '01/01/2018'
-        },
-        {
-            id:3,
-            title: 'Anatomy & Physiology',
-            description: 'A general review of A&P. Geared towards first year med students',
-            status: 'draft',
-            author: 'Kyle Tranel',
-            last_edited: '01/01/2018'
-        },
-    ],
-    pages: 3,
-    page:1
-};
-
 
 class ContainerCourses extends Component{
     componentDidMount() {
-        this.props.adminCourses();
+        this.props.adminCourses({});
+    }
+
+    componentWillUnmount() {
+        this.props.adminCoursesClear();
     }
 
     render(){
@@ -54,4 +26,4 @@ const mapStateToProps = ({ adminCourseList }) =>{
         adminCourseList
     }
 }
-export default connect(mapStateToProps, {adminCourses})(ContainerCourses);
+export default connect(mapStateToProps, { adminCourses, adminCoursesClear })(ContainerCourses);

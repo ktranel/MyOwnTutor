@@ -1,102 +1,25 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
+import { connect } from "react-redux";
+import { adminCourses, adminCoursesClear } from "../../Actions/Course_Actions";
 import Section from '../Admin_Section/AdminSection';
 
-let course_example = {
-    title: 'General Chemistry',
-    sections:[
-        {
-            order:1,
-            title:'Section 1',
-            content:[
-                {
-                    order:1,
-                    type: 'lecture',
-                    title:'Lesson 1',
-                    vimeo_id:'000',
-                    youtube_url: 'someurl.com'
-                },
-                {
-                    order:2,
-                    type: 'lecture',
-                    title:'Lesson 2',
-                    vimeo_id:'000',
-                    youtube_url: 'someurl.com'
-                },
-                {
-                    order:3,
-                    type: 'question',
-                    title:'Question 1',
-                    vimeo_id:'000',
-                    youtube_url: 'someurl.com'
-                },
-            ]
-        },
-        {
-            order:2,
-            title:'Section 2',
-            content:[
-                {
-                    order:1,
-                    type: 'lecture',
-                    title:'Lesson 1',
-                    vimeo_id:'000',
-                    youtube_url: 'someurl.com'
-                },
-                {
-                    order:2,
-                    type: 'lecture',
-                    title:'Lesson 2',
-                    vimeo_id:'000',
-                    youtube_url: 'someurl.com'
-                },
-                {
-                    order:3,
-                    type: 'question',
-                    title:'Question 1',
-                    vimeo_id:'000',
-                    youtube_url: 'someurl.com'
-                },
-            ]
-        },
-        {
-            order:3,
-            title:'Section 3',
-            content:[
-                {
-                    order:1,
-                    type: 'lecture',
-                    title:'Lesson 1',
-                    vimeo_id:'000',
-                    youtube_url: 'someurl.com'
-                },
-                {
-                    order:2,
-                    type: 'lecture',
-                    title:'Lesson 2',
-                    vimeo_id:'000',
-                    youtube_url: 'someurl.com'
-                },
-                {
-                    order:3,
-                    type: 'question',
-                    title:'Question 1',
-                    vimeo_id:'000',
-                    youtube_url: 'someurl.com'
-                },
-            ]
-        }
-    ]
-
-};
-
 class AdminSingleCourseContainer extends Component{
+    componentDidMount() {
+        this.props.adminCourses({ title: this.props.course_title });
+    }
+
+    componentWillUnmount() {
+        this.props.adminCoursesClear();
+    }
+
     renderSections=()=>{
-        //need to replace with stateful call
-        if(course_example){
-            return course_example.sections.map(section=>{
+        const list = this.props.adminCourseList;
+        if(list.length){
+            const course = list[0];
+            return course.sections.map(section=>{
                 return (
-                    <Section title={section.title}/>
+                    <Section key={section.id} title={section.title} section={section}/>
                 );
             })
         }
@@ -123,5 +46,7 @@ class AdminSingleCourseContainer extends Component{
         )
     }
 }
-
-export default AdminSingleCourseContainer;
+function mapStateToProps ({ adminCourseList }){
+    return { adminCourseList };
+}
+export default connect(mapStateToProps, { adminCourses, adminCoursesClear })(AdminSingleCourseContainer);

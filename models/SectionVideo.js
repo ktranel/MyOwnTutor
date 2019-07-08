@@ -1,22 +1,22 @@
 
 
-module.exports = (sequelize, Datatypes) => sequelize.define('course_section', {
+module.exports = (sequelize, Datatypes) => sequelize.define('section_video', {
     id: {
         type: Datatypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
     },
-    course_id: {
-        // fk from course table
+    video_id: {
+        // fk from the course table
         type: Datatypes.INTEGER,
-        allowNull: false,
         required: true,
+        allowNull: false,
     },
     section_id: {
-        // fk from section table
+        // fk from the section table
         type: Datatypes.INTEGER,
-        allowNull: false,
         required: true,
+        allowNull: false,
     },
     updated_at: { type: Datatypes.DATE },
 },

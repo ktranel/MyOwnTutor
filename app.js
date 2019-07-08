@@ -51,6 +51,7 @@ app.use('/auth', require('./API_Gateways/Auth_Routes'));
 // Application Gateways
 app.use('/user', require('./API_Gateways/User_Gateway'));
 app.use('/course', require('./API_Gateways/Course_Gateway'));
+app.use('/content/', require('./API_Gateways/Content_Gateway'));
 
 // Logout Route
 app.get('/logout', (req, res) => {

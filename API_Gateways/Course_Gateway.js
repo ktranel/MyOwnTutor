@@ -126,7 +126,6 @@ router.post('/section', blockStudent, asyncHandler(async (req, res) => {
     if (identialSection.length > 0) return res.status(400).json({ error: 'Course section title already taken' });
 
 
-
     // create section
     const newSection = await Section.create({ title, userId: user.id, courseId: course.id });
 
@@ -257,12 +256,17 @@ router.get('/', asyncHandler(async (req, res) => {
                     Promise.all(contentPromises)
                         .then((contentList) => {
                             // parse content lists and get either a video or a question
-                            const  list = [...contentList[0], ...contentList[1]];
+                            const list = [...contentList[0], ...contentList[1]];
+                            list.sort((a, b) => {
+                                const first = new Date(a.updated_at).getTime();
+                                const second = new Date(b.updated_at).getTime();
+                                return first - second;
+                            });
                             // create 4th promise array to get questions and videos
                             const contentPromises2 = list.map(content => new Promise((resolve2) => {
                                 if (content.video_id) {
                                     Video.get({ id: content.video_id })
-                                        .then(video => {
+                                        .then((video) => {
                                             const modified = {
                                                 id: video.id,
                                                 title: video.title,
@@ -270,12 +274,12 @@ router.get('/', asyncHandler(async (req, res) => {
                                                 userId: video.user_id,
                                                 lastEdited: video.updated_at,
                                                 createdAt: video.created_at,
-                                            }
+                                            };
                                             return resolve2(modified);
                                         });
                                 } else {
                                     Question.get({ id: content.question_id })
-                                        .then(question => {
+                                        .then((question) => {
                                             const modified = {
                                                 id: question.id,
                                                 title: question.title,
@@ -284,7 +288,7 @@ router.get('/', asyncHandler(async (req, res) => {
                                                 userId: question.user_id,
                                                 lastEdited: question.updated_at,
                                                 createdAt: question.created_at,
-                                            }
+                                            };
                                             return resolve2(modified);
                                         });
                                 }
@@ -353,6 +357,47 @@ router.get('/', asyncHandler(async (req, res) => {
         });
     }
     return res.status(200).json({ result: allCourses });
+}));
+
+/* Route to update a course section content order
+@body
+    - sectionId : int
+    - content : array (of content ids)
+        array should contain entire list of content in section and be in the
+        new order desired
+ */
+router.put('/section/content-order', asyncHandler(async (req, res) => {
+    // get post body
+    const { sectionId, content } = req.body;
+    // ensure section exists
+    const section = await Section.get({ id: sectionId });
+    if (!section) return res.status(400).json({ error: `Section not found with sectionId: ${sectionId}` });
+    // get all the content assigned to that section
+    let questions = Section.getQuestions(section.id);
+    let videos = Section.getVideos(section.id);
+    [questions, videos] = await Promise.all([questions, videos]);
+    const assigned = [...videos, ...questions];
+    // loop over the content array and update placement if in assigned list
+    const newOrder = content.filter((item) => {
+        const found = assigned.filter(assignee => assignee.id === item.id);
+        if (found.length > 0) return item;
+        return null;
+    });
+    // the following must be done synchronously to maintain order
+    for (let i = 0; i < newOrder.length; i++) {
+        await Section.updateContentPlace(section.id, newOrder[i]);
+    }
+    // get all the content assigned to that section
+    let questions2 = await Section.getQuestions(section.id);
+    let videos2 = await Section.getVideos(section.id);
+    [questions2, videos2] = await Promise.all([questions2, videos2]);
+    const assigned2 = [...videos2, ...questions2];
+    assigned2.sort((a, b) => {
+        const first = new Date(a.updated_at).getTime();
+        const second = new Date(b.updated_at).getTime();
+        return first - second;
+    });
+    return res.status(200).json({ result: assigned2 });
 }));
 
 module.exports = router;

@@ -9,6 +9,7 @@ const session_secret = process.env.SESSION_SECRET;
 
 const config = {
     dev:{
+        node_env: node_env,
         db:{
            username,
            password,

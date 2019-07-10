@@ -11,19 +11,26 @@ module.exports = (db) => {
                 user_id: userId,
             });
         },
-        get: async ({ title, id }) => {
-            if (!title && !id) throw new Error('options must have property title or id');
-            if (title || id) {
+        get: async (options) => {
+            if (options.title || options.id) {
                 return db.video.findOne({
                     where: {
                         [Op.or]: [
-                            { title: title || null },
-                            { id: id || null },
+                            { title: options.title || null },
+                            { id: options.id || null },
                         ],
                     },
                 });
             }
-            return null;
+            const limit = 20; // number of records per page
+            const count = await db.video.count();
+            const pages = Math.ceil(count / limit);
+            const offset = limit * (options.page - 1);
+            const query = { limit, offset };
+            const videos = await db.video.findAll(query);
+            return {
+                pages, count, page: options.page, videos,
+            };
         },
     };
 };

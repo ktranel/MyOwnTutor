@@ -81,3 +81,32 @@ input, select{
     border: 2px solid #ccc;
     padding:4px;
 }
+
+.pagination li{
+    margin: 0 1rem;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    background: white;
+    border: 1px solid #112f41;
+    border-radius: 50%;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.pagination a{
+    color:#112f41;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 6px;
+}
+
+.pagination li.active{
+    background:#112f41;
+}
+
+.pagination li.active a{color:#fff}
+.pagination a:hover,
+.pagination li:hover{
+    background:#4AD9D9
+}

@@ -25,13 +25,13 @@ module.exports = (db) => {
             // get a single section by its id
             if (options.id) {
                 return db.section.findOne({
-                    where: {id: options.id},
+                    where: { id: options.id },
                 });
             }
             // get a list of sections by their course
             if (options.courseId) {
                 const sections = await db.course_section.findAll({
-                    where: {course_id: options.courseId},
+                    where: { course_id: options.courseId },
                 });
                 if (sections.length === 0) return sections;
                 const sectionIds = sections.map(section => section.section_id);
@@ -77,6 +77,14 @@ module.exports = (db) => {
         updatePlace: async (sectionId, place) => {
             const section = await this.get({ id: sectionId });
             return section.update({ place });
+        },
+        updateContentPlace: async (sectionId, contentId) => {
+            let video = db.section_video.findOne({ where: { section_id: sectionId, video_id: contentId } });
+            let question = db.section_question.findOne({ where: { section_id: sectionId, question_id: contentId } });
+            [video, question] = await Promise.all([video, question ]);
+            if (video) return video.update({ updated_at: new Date() });
+            if (question) return question.update({ updated_at: new Date() });
+            return null;
         },
     };
 };

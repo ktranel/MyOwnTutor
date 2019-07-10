@@ -29,7 +29,7 @@ class AdminNewQuestionContainer extends Component{
         this.state = {
             //state related to answer fields
             answer: '',
-            option_id:0,
+            option_id:0, // increments to allow page to create unique objects
             options: [],
             type: null,
 

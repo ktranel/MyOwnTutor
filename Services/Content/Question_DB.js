@@ -27,19 +27,26 @@ module.exports = (db) => {
                 response,
             });
         },
-        get: async ({ title, id }) => {
-            if (!title && !id) throw new Error('options must have property title or id');
-            if (title || id) {
+        get: async (options) => {
+            if (options.title || options.id) {
                 return db.question.findOne({
                     where: {
                         [Op.or]: [
-                            { title: title || null },
-                            { id: id || null },
+                            { title: options.title || null },
+                            { id: options.id || null },
                         ],
                     },
                 });
             }
-            return null;
+            const limit = 20; // number of records per page
+            const count = await db.question.count();
+            const pages = Math.ceil(count / limit);
+            const offset = limit * (options.page - 1);
+            const query = { limit, offset };
+            const questions = await db.question.findAll(query);
+            return {
+                pages, count, page: options.page, questions,
+            };
         },
     };
 };

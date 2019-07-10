@@ -5,6 +5,9 @@ import { adminCourses, adminCoursesClear } from "../../Actions/Course_Actions";
 import Section from '../Admin_Section/AdminSection';
 
 class AdminSingleCourseContainer extends Component{
+    state = {
+        columns: {}
+    };
     componentDidMount() {
         this.props.adminCourses({ title: this.props.course_title });
     }

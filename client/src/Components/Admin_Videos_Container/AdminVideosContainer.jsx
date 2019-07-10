@@ -24,7 +24,7 @@ class AdminVideosContainer extends Component{
 
     componentDidMount() {
         // set off function to add video list to state
-        this.props.getAdminVideoList();
+        this.props.getAdminVideoList(1);
     }
 
     //open modal for creating a new video

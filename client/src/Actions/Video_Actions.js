@@ -4,7 +4,7 @@ current video list of the app as viewed by an admin or curator
  */
 import axios from 'axios';
 
-//Login request to the api b/e
+// request for list of videos
 export const ADMIN_VIDEO_LIST = 'ADMIN_VIDEO_LIST';
 export const getAdminVideoList = (page) =>{
     return async (dispatch)=>{

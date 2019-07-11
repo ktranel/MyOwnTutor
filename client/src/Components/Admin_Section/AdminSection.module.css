@@ -1,6 +1,11 @@
 .section_title{
     background:#ccc;
     padding:1rem .2rem;
+    cursor: pointer;
+}
+
+.section_title:hover{
+    background:#4ad9d9;
 }
 
 .listing{

@@ -60,5 +60,10 @@ module.exports = (dbHandler) =>  {
             await Promise.all(sectionPromises);
             return dbHandler.updatePlace(sectionId, place);
         },
+        updateContentPlace: async (sectionId, contentId) => {
+            if (!sectionId) throw new Error('arg error: sectionId must be defined');
+            if (!contentId) throw new Error('arg error: contentId must be defined');
+            return dbHandler.updateContentPlace(sectionId, contentId);
+        },
     };
 };

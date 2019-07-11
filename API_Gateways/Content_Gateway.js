@@ -41,7 +41,9 @@ router.post('/video', blockStudent, asyncHandler(async (req, res) => {
     };
     const validation = validate({ title, hostId }, constraints);
     if (validation) return res.status(400).json({ error: validation });
-
+    // ensure video doesn't already exist
+    const found = await Video.get({ title });
+    if (found) return res.status(400).json({ error: `Video with title: ${title} already exists` });
     // pass to video service for creation
     const video = await Video.create(title, hostId, user.id);
     return res.status(200).json({ video });
@@ -106,5 +108,28 @@ router.post('/question', blockStudent, asyncHandler(async (req, res) => {
     }
 
     return res.status(200).json({ question: createdQuestion });
+}));
+/* Route to get a list of videos or a single video
+@query
+    - id*
+    - title*
+    - page* (defaults to 1)
+ */
+router.get('/videos', asyncHandler(async (req, res) => {
+    // get query string
+    const { id, title, page } = req.query;
+    const videos = await Video.get({ id, title, page });
+    return res.status(200).json({ videos });
+}));
+/* Route to get a list of questions or a single question
+@query
+    - id*
+    - page* (defaults to 1)
+ */
+router.get('/questions', asyncHandler( async (req, res) => {
+    // get query string
+    const { id, page } = req.query;
+    const questions = await Question.get({ id, page });
+    return res.status(200).json({ questions });
 }));
 module.exports = router;

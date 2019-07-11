@@ -7,11 +7,12 @@ const basename = path.basename(__filename);
 const config = require('../config/config');
 const db = {};
 
-console.log(config);
+if (config.node_env === 'dev') console.log(config);
 
 const sequelize = new Sequelize(config.db.database, config.db.username, config.db.password, {
     dialect:'mysql',
-    host:config.db.host
+    host:config.db.host,
+    logging: false,
 });
 
 

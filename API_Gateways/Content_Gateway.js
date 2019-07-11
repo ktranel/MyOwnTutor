@@ -41,7 +41,9 @@ router.post('/video', blockStudent, asyncHandler(async (req, res) => {
     };
     const validation = validate({ title, hostId }, constraints);
     if (validation) return res.status(400).json({ error: validation });
-
+    // ensure video doesn't already exist
+    const found = await Video.get({ title });
+    if (found) return res.status(400).json({ error: `Video with title: ${title} already exists` });
     // pass to video service for creation
     const video = await Video.create(title, hostId, user.id);
     return res.status(200).json({ video });

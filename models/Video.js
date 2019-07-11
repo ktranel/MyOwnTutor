@@ -23,6 +23,11 @@ module.exports = (sequelize, Datatypes) => {
                 required: true,
                 allowNull: false,
             },
+            icon: {
+                type: Datatypes.STRING,
+                required: false,
+                allowNull: true,
+            },
             updated_at:{ type: Datatypes.DATE},
             deleted_at:{ type: Datatypes.DATE}
         },

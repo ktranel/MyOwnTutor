@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
 import AdminVideoList from '../Admin_Video_List/AdminVideoList';
-import {Button, Modal} from 'react-bootstrap';
+import {Button, Modal, Alert} from 'react-bootstrap';
 import FileInput from '../File_Input/FileInput';
 import styles from './AdminVideosContainer.module.css';
 import ReactPaginate from 'react-paginate';
 import { connect } from "react-redux";
 import { getAdminVideoList } from "../../Actions/Video_Actions";
+import axios from 'axios';
 
 class AdminVideosContainer extends Component{
     constructor(props){
@@ -14,9 +15,12 @@ class AdminVideosContainer extends Component{
             //decides whether or no modal is showing
             show:false,
             //create new video inputs
-            video_title: '',
-            vimeo_id: '',
+            videoTitle: '',
+            vimeoId: '',
             icon: null,
+            titleError: false,
+            vimeoError: false,
+            generalError: '',
             // handle pagination
             page: 1
         }
@@ -38,13 +42,13 @@ class AdminVideosContainer extends Component{
     };
 
     //alter title when creating a new video
-    handleTitle = (video_title) =>{
-        this.setState({video_title});
+    handleTitle = (videoTitle) =>{
+        this.setState({videoTitle});
     };
 
     //alter vimeo id when creating new video
-    handleVimeo = (vimeo_id) =>{
-        this.setState({vimeo_id});
+    handleVimeo = (vimeoId) =>{
+        this.setState({vimeoId});
     };
 
     //handle icon alteration when creating new video
@@ -55,7 +59,24 @@ class AdminVideosContainer extends Component{
     // handle form submission
     handleSubmit = (e) => {
         e.preventDefault();
-        this.handleClose();
+        this.setState({ generalError: '' });
+        const title = this.state.videoTitle;
+        const vimeoId = this.state.vimeoId;
+        this.setState({ titleError: !(title) });
+        this.setState({ vimeoError: !(vimeoId) });
+        if(!title || !vimeoId) return;
+        axios.post('/content/video', { hostId: vimeoId, title })
+            .then(()=>{
+                this.props.getAdminVideoList(this.state.page);
+                this.handleClose();
+            })
+            .catch((e) => {
+                if (e.response.data){
+                    this.setState({ generalError: e.response.data.error });
+                }else{
+                    this.setState({ generalError: 'Something went wrong. Please contact 608-293-0666 for support'});
+                }
+            });
     };
 
     // handle loading pages of videos
@@ -88,6 +109,7 @@ class AdminVideosContainer extends Component{
                         <Modal.Title>Create New Video</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
+                        { this.state.generalError ? <Alert variant={'danger'}>{this.state.generalError} </Alert> : null }
                         <form onSubmit={this.handleSubmit}>
                             <div className="form-group">
                                 <label>Video Title</label>
@@ -96,6 +118,7 @@ class AdminVideosContainer extends Component{
                                     type="text"
                                     value={this.state.video_title}
                                     onChange={(e)=>this.handleTitle(e.target.value)}/>
+                                {this.state.titleError ? <span className={'red'}>Title is required</span>:null }
                             </div>
                             <div className="form-group">
                                 <label>Vimeo ID</label>
@@ -104,6 +127,7 @@ class AdminVideosContainer extends Component{
                                     type="text"
                                     value={this.state.vimeo_id}
                                     onChange={(e)=>this.handleVimeo(e.target.value)}/>
+                                {this.state.vimeoError ? <span className={'red'}>Vimeo Id is required</span>:null }
                             </div>
                             <div className="form-group">
                                 <FileInput onChange={this.handleIcon} label={'+ Icon'}/>

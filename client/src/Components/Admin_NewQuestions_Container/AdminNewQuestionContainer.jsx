@@ -59,12 +59,12 @@ class AdminNewQuestionContainer extends Component{
     };
 
     removeOption = (id) =>{
-        const answer = [];
+      const answer = [];
       const removed = this.state.options.filter((option) => {
           if (option.answer) answer.push(option.option);
           return option.id !==id
       });
-      this.setState({options: removed});
+      this.setState({ options: removed, answer });
     };
 
     alterAnswer = (answer) => {

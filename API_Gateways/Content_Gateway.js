@@ -70,8 +70,7 @@ router.post('/question', blockStudent, asyncHandler(async (req, res) => {
         },
         answer: {
             presence: true,
-            type: 'string',
-            length: { minimum: 1, maximum: 1000 },
+            type: 'array',
         },
     };
     const validation = validate({ title, type, answer }, constraints);
@@ -89,7 +88,10 @@ router.post('/question', blockStudent, asyncHandler(async (req, res) => {
             duplicates[item] = true;
         });
         if (check) return res.status(400).json({ error: 'Response array contains duplicate responses' });
-        const foundAnswer = responses.filter(item => item === answer);
+        const foundAnswer = answer.filter((item) => {
+            const match = responses.filter(response => response === item);
+            return match.length > 0;
+        });
         if (foundAnswer.length < 1) return res.status(400).json({ error: 'No response matches the answer provided' });
     }
     // check if question already exists
@@ -98,7 +100,10 @@ router.post('/question', blockStudent, asyncHandler(async (req, res) => {
     // create question
     const question = await Question.createQuestion(title, type, user.id);
     // create answer
-    const newAnswer = await Question.createAnswer(question.id, answer);
+    const answerPromises = answer.map((item) => (
+        new Promise(resolve => Question.createAnswer(question.id, item).then(() => resolve()))
+    ));
+    const s = await answerPromises;
 
     // begin creation of return object
     const createdQuestion = { question, answer: newAnswer };

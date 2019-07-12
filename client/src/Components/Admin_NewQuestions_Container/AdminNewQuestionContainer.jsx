@@ -3,31 +3,15 @@ import QuestionForm from '../Add_Question_Form/AddQuestionForm';
 import {Modal} from 'react-bootstrap';
 import VideoAddItem from '../Video_Add_Item/VideoAddItem';
 import styles from './AdminNewQuestionContainer.module.css';
-
-const mock_videos = {
-    videos : [
-        {
-            id: 10001,
-            title: "video 1",
-        },
-        {
-            id: 10002,
-            title: "video 2",
-        },
-        {
-            id: 10003,
-            title: "video 3",
-        }
-    ],
-    page:1,
-    pages:10
-};
+import _ from 'underscore';
+import axios from 'axios';
 
 class AdminNewQuestionContainer extends Component{
     constructor(props){
         super(props);
         this.state = {
             //state related to answer fields
+            title: '',
             answer: '',
             option_id:0, // increments to allow page to create unique objects
             options: [],
@@ -35,12 +19,19 @@ class AdminNewQuestionContainer extends Component{
 
             //state related to modal fields
             show:false,
-            videos:[]
+            videos:[],
+            // error states
+            errors:{},
         }
     }
 
+    changeTitle = (title) => {
+        this.setState({ title });
+    };
     changeType = (event) =>{
-        this.setState({type: event.target.value, options:[]});
+        const errors = this.state.errors;
+        errors.answer = null;
+        this.setState({type: event.target.value, options:[], errors, answer: ''});
     };
 
     addOption = () =>{
@@ -53,7 +44,9 @@ class AdminNewQuestionContainer extends Component{
     };
 
     alterOption = (altered_option) =>{
+        const answer = [];
         const altered = this.state.options.map(option=>{
+            if (option.answer) answer.push(option.option);
             if(option.id === altered_option.id){
                 //this is the one we want to change
                 return altered_option;
@@ -62,12 +55,21 @@ class AdminNewQuestionContainer extends Component{
                 return option;
             }
         });
-        this.setState({options: altered});
+        this.setState({ options: altered, answer });
     };
 
     removeOption = (id) =>{
-      const removed = this.state.options.filter(option=> option.id !==id);
+        const answer = [];
+      const removed = this.state.options.filter((option) => {
+          if (option.answer) answer.push(option.option);
+          return option.id !==id
+      });
       this.setState({options: removed});
+    };
+
+    alterAnswer = (answer) => {
+        answer = [answer];
+        this.setState({ answer });
     };
 
     //open modal for adding a video
@@ -96,20 +98,54 @@ class AdminNewQuestionContainer extends Component{
         this.setState({videos: altered});
     };
 
+    // handle submission of the general questions
+    handleSubmit = (e) => {
+        e.preventDefault();
+        const {title, answer, options, type, } = this.state;
+        // error handling
+        const errors = {};
+        if (!title) errors.title = true;
+        if (!type) errors.type = true;
+        if(type === 'text'){
+            if (!answer.length < 1 || String(answer[0]).trim() === '') errors.answer = true;
+        } else if (type === 'multiple choice'){
+            if (options.length < 2) errors.optionLength = true;
+            options.forEach((option) => {
+                if (option.option.trim() === '') errors.emptyOption = true;
+            });
+            if (answer.length < 1) errors.answer = true;
+        }
+        this.setState({ errors });
+        if (!_.isEmpty(errors)) return;
+        axios.post('/content/question', {title, answer, type, responses: options })
+            .then(() => {
+                this.props.history.push('/questions')
+            })
+            .catch((e) =>{
+                if (e.response.data) this.setState({ errors: { general: true} });
+            });
+    };
+
     render(){
+        const mockVideos = {videos:[]};
         return(
             <div>
                 <h3 className="lgtBlue">Add Question</h3>
                 <div className="row">
                     <div className="col-12 col-md-6">
                         <QuestionForm
+                            title={this.state.title}
+                            changeTitle={this.changeTitle}
                             changeType={this.changeType}
                             addOption={this.addOption}
                             alterOption={this.alterOption}
+                            alterAnswer={this.alterAnswer}
                             removeOption={this.removeOption}
                             type={this.state.type}
                             answer={this.state.answer}
-                            options={this.state.options}/>
+                            options={this.state.options}
+                            errors={this.state.errors}/>
+
                         <hr/>
                         <div><h6 className={`red ${styles.add_video}`} onClick={this.showModal}>Add Videos +</h6></div>
                     </div>
@@ -139,7 +175,7 @@ class AdminNewQuestionContainer extends Component{
                     </Modal.Header>
                     <Modal.Body>
                         <form>
-                            {mock_videos.videos.map((video, i)=>{
+                            {mockVideos.videos.map((video, i)=>{
                                 //determine if video was already selected by user
                                 let selected = this.state.videos.filter(item=>video.id === item.id).length;
                                 return (
@@ -156,7 +192,7 @@ class AdminNewQuestionContainer extends Component{
 
                 <div className="row">
                     <div className="col-12">
-                        <button className="btn lgtBlueBG white f-w:700">Save Changes</button>
+                        <button onClick={this.handleSubmit} className="btn lgtBlueBG white f-w:700">Save Changes</button>
                     </div>
                 </div>
             </div>

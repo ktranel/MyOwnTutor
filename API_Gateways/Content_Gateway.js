@@ -140,10 +140,50 @@ router.get('/videos', asyncHandler(async (req, res) => {
     - id*
     - page* (defaults to 1)
  */
-router.get('/questions', asyncHandler( async (req, res) => {
+router.get('/questions', asyncHandler(async (req, res) => {
     // get query string
     const { id, page } = req.query;
     const questions = await Question.get({ id, page });
     return res.status(200).json({ questions });
 }));
 module.exports = router;
+
+/* Route to assign a video to a question
+@body
+    - questionId : string
+    - videoIds : array
+ */
+router.post('/question/video/assign', blockStudent, asyncHandler(async (req, res) => {
+    // get post body
+    const { questionId, videoIds } = req.body;
+    // validation
+    const constraints = {
+        questionId: {
+            presence: true,
+            type: 'string',
+        },
+        videoIds: {
+            presence: true,
+            type: 'array',
+        },
+    };
+    const validation = validate({ questionId, videoIds }, constraints);
+    if (validation) return res.status(400).json({ error: validation });
+    // verify question exists
+    const question = await Question.get({ id: questionId });
+    if (!question) return res.status(400).json({ error: `Question Id: ${questionId} is not a valid question id` });
+    // verify videos exists
+    const videoVerifyPromises = videoIds.map((video) => (
+        new Promise((resolve) => Video.get({ id: video }).then(v => resolve(v)))
+    ));
+    let videos = await Promise.all(videoVerifyPromises);
+    const invalids = videos.filter(video => !(video));
+    videos = videos.filter(video => video);
+    if (invalids.length > 1) return res.status(400).json({ error: `Video Ids: ${invalids.join(', ')} were not valid` });
+    // assign video to question
+    const assignmentPromises = videos.map((video) => (
+        new Promise((resolve) => Question.assignVideo(question.id, video).then(a => resolve(a)))
+    ));
+    const assignment = await Promise.all(assignmentPromises);
+    return res.status(200).json({ success: assignment });
+}));

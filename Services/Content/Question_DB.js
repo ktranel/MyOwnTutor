@@ -50,5 +50,11 @@ module.exports = (db) => {
                 pages, count, page: options.page, questions,
             };
         },
+        assignVideo: async (questionId, videoId) => {
+            return db.question_video.create({
+                question_id: questionId,
+                video_id: videoId,
+            });
+        },
     };
 };

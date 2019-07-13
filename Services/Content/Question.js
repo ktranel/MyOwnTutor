@@ -27,4 +27,7 @@ module.exports = dbHandler => ({
         if (!options.page) options.page = 1;
         return dbHandler.get(options);
     },
+    assignVideo: async(questionId, videoId) => {
+        return dbHandler.assignVideo(questionId, videoId);
+    },
 });

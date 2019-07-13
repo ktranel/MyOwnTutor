@@ -1,7 +1,7 @@
 module.exports = (db) => {
     const { Op } = db.Sequelize;
     return {
-        create: async (title, type, userId) => {
+        create: async (title, type, userId, category) => {
             if (!title) throw new Error('invalid arg: title');
             if (!type) throw new Error('invalid arg: type');
             if (!userId) throw new Error('invalid arg: userId');
@@ -9,6 +9,7 @@ module.exports = (db) => {
                 title,
                 type,
                 user_id: userId,
+                category
             });
         },
         createAnswer: async (questionId, answer) => {
@@ -36,6 +37,7 @@ module.exports = (db) => {
                             { id: options.id || null },
                         ],
                     },
+                    include: [db.answer]
                 });
             }
             const limit = 20; // number of records per page

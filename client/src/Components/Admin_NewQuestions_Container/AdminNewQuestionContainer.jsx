@@ -5,6 +5,8 @@ import VideoAddItem from '../Video_Add_Item/VideoAddItem';
 import styles from './AdminNewQuestionContainer.module.css';
 import _ from 'underscore';
 import axios from 'axios';
+import { getAdminVideoList } from "../../Actions/Video_Actions";
+import { connect } from "react-redux";
 
 class AdminNewQuestionContainer extends Component{
     constructor(props){
@@ -15,14 +17,20 @@ class AdminNewQuestionContainer extends Component{
             answer: '',
             option_id:0, // increments to allow page to create unique objects
             options: [],
-            type: null,
+            type: '',
+            category: '',
 
             //state related to modal fields
             show:false,
             videos:[],
+            page: 1,
             // error states
             errors:{},
         }
+    }
+
+    componentDidMount() {
+        this.props.getAdminVideoList(1);
     }
 
     changeTitle = (title) => {
@@ -33,6 +41,8 @@ class AdminNewQuestionContainer extends Component{
         errors.answer = null;
         this.setState({type: event.target.value, options:[], errors, answer: ''});
     };
+
+    changeCategory = category => this.setState({ category });
 
     addOption = () =>{
         const new_option = {
@@ -98,16 +108,28 @@ class AdminNewQuestionContainer extends Component{
         this.setState({videos: altered});
     };
 
+    // move backwards and forwards in video list
+    changePage = (e, direction) => {
+        e.preventDefault();
+        const { page } = this.state;
+        if (page === this.props.pages || page === 1) return;
+        if (direction === 'next'){
+            this.setState({ page: page + 1 }, () => this.props.getAdminVideoList(this.state.page));
+        } else if (direction === 'prev'){
+            this.setState({ page: page - 1 }, () => this.props.getAdminVideoList(this.state.page));
+        }
+    };
+
     // handle submission of the general questions
     handleSubmit = (e) => {
         e.preventDefault();
-        const {title, answer, options, type, } = this.state;
+        const {title, answer, options, type, category} = this.state;
         // error handling
         const errors = {};
         if (!title) errors.title = true;
         if (!type) errors.type = true;
         if(type === 'text'){
-            if (!answer.length < 1 || String(answer[0]).trim() === '') errors.answer = true;
+            if (answer.length < 1 || String(answer[0]).trim() === '') errors.answer = true;
         } else if (type === 'multiple choice'){
             if (options.length < 2) errors.optionLength = true;
             options.forEach((option) => {
@@ -117,9 +139,9 @@ class AdminNewQuestionContainer extends Component{
         }
         this.setState({ errors });
         if (!_.isEmpty(errors)) return;
-        axios.post('/content/question', {title, answer, type, responses: options })
+        axios.post('/content/question', {title, answer, type, responses: options, category })
             .then(() => {
-                this.props.history.push('/questions')
+                this.props.history.push('/admin/questions')
             })
             .catch((e) =>{
                 if (e.response.data) this.setState({ errors: { general: true} });
@@ -127,7 +149,6 @@ class AdminNewQuestionContainer extends Component{
     };
 
     render(){
-        const mockVideos = {videos:[]};
         return(
             <div>
                 <h3 className="lgtBlue">Add Question</h3>
@@ -136,6 +157,7 @@ class AdminNewQuestionContainer extends Component{
                         <QuestionForm
                             title={this.state.title}
                             changeTitle={this.changeTitle}
+                            changeCategory={this.changeCategory}
                             changeType={this.changeType}
                             addOption={this.addOption}
                             alterOption={this.alterOption}
@@ -155,7 +177,7 @@ class AdminNewQuestionContainer extends Component{
                                 <h5 className={`lgtBlue`}>Video List</h5>
                                 {this.state.videos.map(item=>{
                                     return (
-                                        <div>
+                                        <div key={item.id}>
                                             <h6 className={styles.video_listing}>{item.title}</h6>
                                         </div>
                                     )
@@ -175,7 +197,7 @@ class AdminNewQuestionContainer extends Component{
                     </Modal.Header>
                     <Modal.Body>
                         <form>
-                            {mockVideos.videos.map((video, i)=>{
+                            {this.props.videos.map((video, i)=>{
                                 //determine if video was already selected by user
                                 let selected = this.state.videos.filter(item=>video.id === item.id).length;
                                 return (
@@ -188,11 +210,15 @@ class AdminNewQuestionContainer extends Component{
                             })}
                         </form>
                     </Modal.Body>
+                    <Modal.Footer>
+                        <button onClick={(e)=>this.changePage(e, 'prev')}><i className="fas fa-arrow-left"></i></button>
+                        <button onClick={(e)=>this.changePage(e, 'next')}><i className="fas fa-arrow-right"></i></button>
+                    </Modal.Footer>
                 </Modal>
 
                 <div className="row">
                     <div className="col-12">
-                        <button onClick={this.handleSubmit} className="btn lgtBlueBG white f-w:700">Save Changes</button>
+                        <button onClick={this.handleSubmit.bind(this)} className="btn lgtBlueBG white f-w:700">Save Changes</button>
                     </div>
                 </div>
             </div>
@@ -200,4 +226,7 @@ class AdminNewQuestionContainer extends Component{
     }
 }
 
-export default AdminNewQuestionContainer
+function mapStateToProps({ adminVideoList }){
+    return { videos: adminVideoList.videos || [], pages: adminVideoList.pages };
+}
+export default connect(mapStateToProps, { getAdminVideoList })(AdminNewQuestionContainer);

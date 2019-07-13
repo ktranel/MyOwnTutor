@@ -6,7 +6,7 @@ module.exports = (sequelize, Datatypes) => sequelize.define('response', {
         },
         question_id: {
             // fk from the question table
-            type: Datatypes.INTEGER,
+            type: Datatypes.UUID,
             required: true,
             allowNull: false,
         },

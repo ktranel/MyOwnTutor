@@ -1,6 +1,6 @@
 import React from 'react';
 
-const AddQuestionForm = ({title, changeTitle, changeType, addOption, alterOption, removeOption, alterAnswer, type, answer, options, errors}) =>{
+const AddQuestionForm = ({title, changeTitle, changeCategory, changeType, addOption, alterOption, removeOption, alterAnswer, type, answer, options, errors}) =>{
     return(
         <form onSubmit={ (e) => e.preventDefault() }>
             <div className="form-group">
@@ -25,7 +25,7 @@ const AddQuestionForm = ({title, changeTitle, changeType, addOption, alterOption
 
             <div className="form-group">
                 <label htmlFor="category">Question Category</label>
-                <select name="category" id="category">
+                <select name="category" id="category" onChange={e => changeCategory(e.target.value)}>
                     <option value="">Choose category</option>
                     <option value="chemistry">chemistry</option>
                     <option value="math">math</option>

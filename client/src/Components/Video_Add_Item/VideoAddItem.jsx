@@ -12,7 +12,6 @@ class VideoAddItem extends Component{
     flipSelected = () =>{
         this.setState({selected: !this.state.selected});
     };
-item
     render(){
         return(
             <div>

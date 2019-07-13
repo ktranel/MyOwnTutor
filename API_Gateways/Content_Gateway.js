@@ -52,6 +52,7 @@ router.post('/video', blockStudent, asyncHandler(async (req, res) => {
 router.post('/question', blockStudent, asyncHandler(async (req, res) => {
     // get post body
     const { title, type, answer, responses } = req.body;
+    const category = req.body.category || 'uncategorized';
     const { user } = req;
     // validation
     const constraints = {
@@ -72,10 +73,17 @@ router.post('/question', blockStudent, asyncHandler(async (req, res) => {
             presence: true,
             type: 'array',
         },
+        category: {
+            type: 'string',
+            inclusion: {
+                within: ['chemistry', 'physics', 'math'],
+                message: '^%{value} is not included in list',
+            },
+        },
     };
-    const validation = validate({ title, type, answer }, constraints);
+    const validation = validate({ title, type, answer, category }, constraints);
     if (validation) return res.status(400).json({ error: validation });
-    if (type === 'multiple choice'){
+    if (type === 'multiple choice') {
         if (!responses || responses.length < 2) return res.status(400).json({ error: 'invalid responses in post body' });
         // ensure no duplicate responses and that 1 response is equal to answer
         const duplicates = {};
@@ -98,15 +106,16 @@ router.post('/question', blockStudent, asyncHandler(async (req, res) => {
     const found = await Question.get({ title });
     if (found) return res.status(400).json({ error: `Question title: "${title}" already exists` });
     // create question
-    const question = await Question.createQuestion(title, type, user.id);
+    const question = await Question.createQuestion(title, type, user.id, category);
     // create answer
     const answerPromises = answer.map((item) => (
-        new Promise(resolve => Question.createAnswer(question.id, item).then(() => resolve()))
+        new Promise(resolve => Question.createAnswer(question.id, item)
+            .then(newAnswer => resolve(newAnswer)))
     ));
-    const s = await answerPromises;
+    const newAnswers = await Promise.all(answerPromises);
 
     // begin creation of return object
-    const createdQuestion = { question, answer: newAnswer };
+    const createdQuestion = { question, answer: newAnswers };
     if (type === 'multiple choice') {
         const promises = responses.map(item => Question.createResponse(question.id, item));
         createdQuestion.responses = await Promise.all(promises);

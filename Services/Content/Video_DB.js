@@ -26,7 +26,7 @@ module.exports = (db) => {
             const count = await db.video.count();
             const pages = Math.ceil(count / limit);
             const offset = limit * (options.page - 1);
-            const query = { limit, offset };
+            const query = { limit, offset, order:[['created_at', 'asc']] };
             const videos = await db.video.findAll(query);
             return {
                 pages, count, page: options.page, videos,

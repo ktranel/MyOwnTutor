@@ -15,7 +15,7 @@ module.exports = (sequelize, Datatypes) => {
             },
             question_id: {
                 // fk from question table
-                type:Datatypes.INTEGER,
+                type: Datatypes.UUID,
                 required: true,
                 allowNull: false,
             },

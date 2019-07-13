@@ -1,10 +1,10 @@
 module.exports = dbHandler => ({
-    createQuestion: async (title, type, userId) => {
+    createQuestion: async (title, type, userId, category) => {
         if (!dbHandler.create) throw new Error('dbHandler must have property create');
         if (!title) throw new Error('invalid arg: title');
         if (!type) throw new Error('invalid arg: type');
         if (!userId) throw new Error('invalid arg: userId');
-        return dbHandler.create(title, type, userId);
+        return dbHandler.create(title, type, userId, category);
     },
     createResponse: async (questionId, response) => {
         if (!dbHandler.createResponse) throw new Error('dbHandler must have property createResponse');

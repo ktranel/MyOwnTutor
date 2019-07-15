@@ -6,6 +6,7 @@ import SingleCourseContainer from '../Admin_Single_Course_Container/AdminSingleC
 import ContainerVideos from '../Admin_Videos_Container/AdminVideosContainer';
 import ContainerQuestions from '../Admin_Questions_Container/AdminQuestionsContainer';
 import NewQuestionContainer from '../Admin_NewQuestions_Container/AdminNewQuestionContainer';
+import NewCourseContainer from '../Admin_NewCourse_Container/AdminNewCourseContainer';
 
 const Admin_Routes = (props) =>{
     return(
@@ -14,6 +15,7 @@ const Admin_Routes = (props) =>{
             <div className={'p:7'}>
                 <Route path={props.match.path + '/users'} render={()=><div>users</div>}/>
                 <Route path={props.match.path + '/courses'} exact component={ContainerCourses}/>
+                <Route path={props.match.path + '/courses/new'} exact component={NewCourseContainer}/>
                 <Route path={props.match.path + '/courses/:course'} exact
                        render={
                            ()=>{

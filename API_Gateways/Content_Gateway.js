@@ -133,6 +133,11 @@ router.get('/videos', asyncHandler(async (req, res) => {
     // get query string
     const { id, title, page } = req.query;
     const videos = await Video.get({ id, title, page });
+    videos.videos = videos.videos.map(video => ({
+        id: video.id,
+        title: video.title,
+        last_edited: video.dataValues.created_at,
+    }));
     return res.status(200).json({ videos });
 }));
 /* Route to get a list of questions or a single question
@@ -182,7 +187,7 @@ router.post('/question/video/assign', blockStudent, asyncHandler(async (req, res
     if (invalids.length > 1) return res.status(400).json({ error: `Video Ids: ${invalids.join(', ')} were not valid` });
     // assign video to question
     const assignmentPromises = videos.map((video) => (
-        new Promise((resolve) => Question.assignVideo(question.id, video).then(a => resolve(a)))
+        new Promise((resolve) => Question.assignVideo(question.id, video.id).then(a => resolve(a)))
     ));
     const assignment = await Promise.all(assignmentPromises);
     return res.status(200).json({ success: assignment });

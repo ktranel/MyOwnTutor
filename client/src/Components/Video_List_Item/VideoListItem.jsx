@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import { DateTime } from 'luxon';
 import styles from './VideoListItem.module.css';
 
 export class VideoListItem extends Component{
@@ -28,7 +29,7 @@ export class VideoListItem extends Component{
                     <p style={display} className={`description`}>{video.description}</p>
                 </div>
                 <div className={`${styles.video_meta} col-12 col-md-6`}>
-                    <div>Uploaded: {video.uploaded}</div>
+                    <div>Uploaded: {DateTime.local().toLocaleString(video.last_edited)}</div>
                 </div>
             </div>
         )

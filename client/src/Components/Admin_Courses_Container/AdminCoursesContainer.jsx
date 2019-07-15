@@ -15,7 +15,7 @@ class ContainerCourses extends Component{
     render(){
         return(
             <div>
-                <h3 className={`lgtBlue`}>Courses <i className="red fas fa-plus-circle"> </i></h3>
+                <h4 className={`lgtBlue`}>Courses <i className="red fas fa-plus-circle"> </i></h4>
                 <AdminCourseList courses={this.props.adminCourseList}/>
             </div>
         )

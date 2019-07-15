@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import QuestionForm from '../Add_Question_Form/AddQuestionForm';
-import {Modal} from 'react-bootstrap';
+import {Modal, Alert} from 'react-bootstrap';
 import VideoAddItem from '../Video_Add_Item/VideoAddItem';
 import styles from './AdminNewQuestionContainer.module.css';
 import _ from 'underscore';
@@ -53,14 +53,15 @@ class AdminNewQuestionContainer extends Component{
         this.setState({options : [...this.state.options, new_option], option_id: this.state.option_id +1})
     };
 
-    alterOption = (altered_option) =>{
+    alterOption = (alteredOption) =>{
         const answer = [];
         const altered = this.state.options.map(option=>{
-            if (option.answer) answer.push(option.option);
-            if(option.id === altered_option.id){
+            if(option.id === alteredOption.id){
+                if (alteredOption.answer) answer.push(option.option);
                 //this is the one we want to change
-                return altered_option;
+                return alteredOption;
             }else{
+                if (option.answer) answer.push(option.option);
                 //return these unchanged
                 return option;
             }
@@ -121,7 +122,7 @@ class AdminNewQuestionContainer extends Component{
     };
 
     // handle submission of the general questions
-    handleSubmit = (e) => {
+    handleSubmit = async (e) => {
         e.preventDefault();
         const {title, answer, options, type, category} = this.state;
         // error handling
@@ -139,13 +140,21 @@ class AdminNewQuestionContainer extends Component{
         }
         this.setState({ errors });
         if (!_.isEmpty(errors)) return;
-        axios.post('/content/question', {title, answer, type, responses: options, category })
-            .then(() => {
-                this.props.history.push('/admin/questions')
-            })
+        const responses = options.map(option => option.option);
+        const question = await axios.post('/content/question', {title, answer, type, responses, category })
             .catch((e) =>{
-                if (e.response.data) this.setState({ errors: { general: true} });
+                if (e.response) this.setState({ errors: { general: e.response.data.error} });
+
             });
+        if (!question) return;
+        if (this.state.videos.length > 0){
+            const videos = this.state.videos.map(video => video.id);
+            await axios.post('/content/question/video/assign', {
+                questionId: question.data.question.question.id,
+                videoIds: videos
+            });
+        }
+        this.props.history.push('/admin/questions')
     };
 
     render(){
@@ -218,6 +227,7 @@ class AdminNewQuestionContainer extends Component{
 
                 <div className="row">
                     <div className="col-12">
+                        {this.state.errors.general ? <Alert variant={'danger'}>{this.state.errors.general}</Alert> : null }
                         <button onClick={this.handleSubmit.bind(this)} className="btn lgtBlueBG white f-w:700">Save Changes</button>
                     </div>
                 </div>

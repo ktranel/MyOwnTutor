@@ -21,7 +21,11 @@ const Video = videoService(videoDbHandler);
 const questionService = require('../Services/Content/Question');
 const Question = questionService(questionDbHandler);
 
-
+/* route to create a video
+@body
+    - title: string
+    - hostId: string
+ */
 router.post('/video', blockStudent, asyncHandler(async (req, res) => {
     // get post body
     const { title, hostId } = req.body;
@@ -49,6 +53,14 @@ router.post('/video', blockStudent, asyncHandler(async (req, res) => {
     return res.status(200).json({ video });
 }));
 
+/* route to create a question
+@body
+    -title
+    - type : string
+    - answer: array
+    - responses: array
+    - category: string
+ */
 router.post('/question', blockStudent, asyncHandler(async (req, res) => {
     // get post body
     const { title, type, answer, responses } = req.body;
@@ -83,6 +95,7 @@ router.post('/question', blockStudent, asyncHandler(async (req, res) => {
     };
     const validation = validate({ title, type, answer, category }, constraints);
     if (validation) return res.status(400).json({ error: validation });
+    if (answer.length < 1) return res.status(400).json({ error: 'Answer array must have at least 1 answer' });
     if (type === 'multiple choice') {
         if (!responses || responses.length < 2) return res.status(400).json({ error: 'invalid responses in post body' });
         // ensure no duplicate responses and that 1 response is equal to answer
@@ -107,22 +120,26 @@ router.post('/question', blockStudent, asyncHandler(async (req, res) => {
     if (found) return res.status(400).json({ error: `Question title: "${title}" already exists` });
     // create question
     const question = await Question.createQuestion(title, type, user.id, category);
+    const createdQuestion = { question };
     // create answer
-    const answerPromises = answer.map((item) => (
-        new Promise(resolve => Question.createAnswer(question.id, item)
-            .then(newAnswer => resolve(newAnswer)))
-    ));
-    const newAnswers = await Promise.all(answerPromises);
+    if (type === 'text') {
+        createdQuestion.answer = await Question.createAnswer(question.id, answer[0]);
+    }
 
-    // begin creation of return object
-    const createdQuestion = { question, answer: newAnswers };
     if (type === 'multiple choice') {
-        const promises = responses.map(item => Question.createResponse(question.id, item));
+        const promises = responses.map((item) => {
+            // check if response is also in answer list
+            const associatedAnswer = answer.filter(unit => unit === item);
+            let responseAnswer = false;
+            if (associatedAnswer.length > 0) responseAnswer = true;
+            return Question.createResponse(question.id, item, responseAnswer);
+        });
         createdQuestion.responses = await Promise.all(promises);
     }
 
     return res.status(200).json({ question: createdQuestion });
 }));
+
 /* Route to get a list of videos or a single video
 @query
     - id*
@@ -140,6 +157,7 @@ router.get('/videos', asyncHandler(async (req, res) => {
     }));
     return res.status(200).json({ videos });
 }));
+
 /* Route to get a list of questions or a single question
 @query
     - id*
@@ -151,7 +169,6 @@ router.get('/questions', asyncHandler(async (req, res) => {
     const questions = await Question.get({ id, page });
     return res.status(200).json({ questions });
 }));
-module.exports = router;
 
 /* Route to assign a video to a question
 @body
@@ -192,3 +209,22 @@ router.post('/question/video/assign', blockStudent, asyncHandler(async (req, res
     const assignment = await Promise.all(assignmentPromises);
     return res.status(200).json({ success: assignment });
 }));
+
+/* Route to get all the videos assigned to a question
+@query
+    - questionId : string
+ */
+router.get('/question/videos', blockStudent, async (req, res) => {
+    const { questionId } = req.query;
+    const constraints = {
+        questionId: {
+            presence: true,
+            type: 'string',
+        },
+    };
+    const validation = validate({ questionId }, constraints);
+    if (validation) return res.status(400).json({ error: validation });
+    const videos = await Question.getVideos(questionId);
+    return res.status(200).json({ videos });
+});
+module.exports = router;

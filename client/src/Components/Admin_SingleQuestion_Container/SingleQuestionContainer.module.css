@@ -1,0 +1,14 @@
+.add{
+    text-align: center;
+    padding: .5rem 0;
+    border: 3px dashed #ccc;
+    border-radius: 10px;
+    cursor: pointer;
+    color:#ccc;
+    font-size: 16px;
+}
+
+.add:hover{
+    background:#ccc;
+    color:#fff;
+}

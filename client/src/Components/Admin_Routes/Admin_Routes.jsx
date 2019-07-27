@@ -7,6 +7,7 @@ import ContainerVideos from '../Admin_Videos_Container/AdminVideosContainer';
 import ContainerQuestions from '../Admin_Questions_Container/AdminQuestionsContainer';
 import NewQuestionContainer from '../Admin_NewQuestions_Container/AdminNewQuestionContainer';
 import NewCourseContainer from '../Admin_NewCourse_Container/AdminNewCourseContainer';
+import SingleQuestionContainer from '../Admin_SingleQuestion_Container/AdminSingleQuestionContainer';
 
 const Admin_Routes = (props) =>{
     return(
@@ -27,6 +28,7 @@ const Admin_Routes = (props) =>{
 
                 <Route path={props.match.path + '/videos'} exact component={ContainerVideos}/>
                 <Route path={props.match.path + '/questions'} exact component={ContainerQuestions}/>
+                <Route path={`${props.match.path}/questions/id/:id`} component={SingleQuestionContainer}/>
                 <Route path={props.match.path + '/questions/new'} exact component={NewQuestionContainer}/>
             </div>
         </div>

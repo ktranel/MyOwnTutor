@@ -1,0 +1,20 @@
+.response{
+    display: flex;
+    align-items: center;
+}
+
+.trash{
+    float:left;
+    width:30px;
+    cursor: pointer;
+}
+
+.input{
+    float:left;
+    width:85%;
+}
+
+.check{
+    float:left;
+    width:30px;
+}

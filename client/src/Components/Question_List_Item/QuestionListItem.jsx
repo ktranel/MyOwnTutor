@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
+import { withRouter } from "react-router";
 import styles from './QuestionListItem.module.css'
 
 
-export class QuestionListItem extends Component{
+class QuestionListItem extends Component{
     constructor(props){
         super(props);
         this.state={
@@ -21,7 +22,7 @@ export class QuestionListItem extends Component{
     render(){
         const {question} = this.props;
         return(
-            <div className={`${styles.question_listing} row`}>
+            <div className={`${styles.question_listing} row`} onClick={()=>this.props.history.push(`questions/id/${question.id}`)}>
                 <div className="col-12 col-md-8">{question.title}</div>
                 <div className="col-12 col-md-2">{question.type}</div>
                 <div className="col-12 col-md-2">{question.category}</div>
@@ -29,3 +30,5 @@ export class QuestionListItem extends Component{
         )
     }
 }
+
+export default withRouter(QuestionListItem);

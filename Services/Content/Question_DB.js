@@ -20,25 +20,30 @@ module.exports = (db) => {
                 answer,
             });
         },
-        createResponse: async (questionId, response) => {
+        createResponse: async (questionId, response, answer) => {
             if (!questionId) throw new Error('invalid arg: questionId');
             if (!response) throw new Error('invalid arg: response');
             return db.response.create({
                 question_id: questionId,
                 response,
+                answer,
             });
         },
         get: async (options) => {
             if (options.title || options.id) {
-                return db.question.findOne({
+                const question = await db.question.findOne({
                     where: {
                         [Op.or]: [
                             { title: options.title || null },
                             { id: options.id || null },
                         ],
                     },
-                    include: [db.answer]
+                    include: [db.answer, db.response],
                 });
+                const transformedQuestion = question.dataValues;
+                transformedQuestion.responses = question.responses;
+                transformedQuestion.answers = question.answers.length > 0 ? question.answers[0] : null;
+                return transformedQuestion;
             }
             const limit = 20; // number of records per page
             const count = await db.question.count();
@@ -54,6 +59,11 @@ module.exports = (db) => {
             return db.question_video.create({
                 question_id: questionId,
                 video_id: videoId,
+            });
+        },
+        getVideos: async (questionId) => {
+            return db.question_video.findAll({
+                where: { question_id: questionId},
             });
         },
     };

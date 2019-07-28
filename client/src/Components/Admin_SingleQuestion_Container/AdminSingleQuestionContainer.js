@@ -172,7 +172,7 @@ class AdminSingleQuestionContainer extends Component{
     renderVideos = () => {
         return this.state.videos.map((video) => {
             return(
-                <div>{video.title}</div>
+                <div className={`${styles.video} white yellowBG m-b:.5`}>{video.title}</div>
             )
         });
     };

@@ -19,3 +19,10 @@
     border-radius: 6px;
     font-weight: bold;
 }
+
+.video{
+    padding:.5rem 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius:5px;
+}

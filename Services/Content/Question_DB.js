@@ -40,10 +40,13 @@ module.exports = (db) => {
                     },
                     include: [db.answer, db.response],
                 });
-                const transformedQuestion = question.dataValues;
-                transformedQuestion.responses = question.responses;
-                transformedQuestion.answers = question.answers.length > 0 ? question.answers[0] : null;
-                return transformedQuestion;
+                if (question){
+                    const transformedQuestion = question.dataValues;
+                    transformedQuestion.responses = question.responses;
+                    transformedQuestion.answers = question.answers.length > 0 ? question.answers[0] : null;
+                    return transformedQuestion;
+                }
+                return null;
             }
             const limit = 20; // number of records per page
             const count = await db.question.count();
@@ -62,9 +65,11 @@ module.exports = (db) => {
             });
         },
         getVideos: async (questionId) => {
-            return db.question_video.findAll({
+            let videos = await db.question_video.findAll({
                 where: { question_id: questionId},
             });
+            videos = videos.map(item => item.video_id);
+            return db.video.findAll({ where: { id: videos } });
         },
     };
 };

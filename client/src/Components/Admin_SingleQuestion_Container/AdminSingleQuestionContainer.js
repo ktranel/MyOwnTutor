@@ -4,7 +4,7 @@ import { getAdminQuestion, clearAdminQuestion, getAdminQuestionVideos } from "..
 import _ from 'lodash';
 import Response from '../Single_Question_Response/SingleQuestionResponse';
 import styles from './SingleQuestionContainer.module.css'
-import {questionVideos} from "../../Reducers/Question_Reducer";
+import VideoList from '../Add_Video_List/AddVideoList';
 
 class AdminSingleQuestionContainer extends Component{
     state = {
@@ -14,6 +14,7 @@ class AdminSingleQuestionContainer extends Component{
         answer: '',
         responses: [],
         videos: [],
+        show: false,
     };
 
     componentDidMount() {
@@ -35,6 +36,32 @@ class AdminSingleQuestionContainer extends Component{
             this.setState({ videos: this.props.videos });
         }
     }
+    //open modal for adding a video
+    handleShow = () =>{
+        this.setState({show: true});
+    };
+
+    //close modal for adding a video
+    handleClose = () =>{
+        this.setState({show:false});
+    };
+
+    // handle the selection of a video from a video list
+    selectVideo = (selected) => {
+        let altered = [];
+        //check if id is already in selected videos
+        const check = this.state.videos.filter(item=>item.id === selected.id).length;
+
+        //remove video if present
+        if(check > 0){
+            altered = this.state.videos.filter(item=>item.id !== selected.id);
+        }else{
+            //add video to list
+            altered = [...this.state.videos, selected];
+        }
+
+        this.setState({videos: altered});
+    };
 
     renderTextAnswer = () => {
         if (!this.props.question.answers) return;
@@ -167,8 +194,14 @@ class AdminSingleQuestionContainer extends Component{
                 <div className="col-12 col-md-6">
                     <label className='red'>Videos</label>
                     {this.renderVideos()}
-                    <div className={styles.add}>Add Video</div>
+                    <div className={styles.add} onClick={this.handleShow}>Add Video</div>
                 </div>
+                <VideoList
+                    selected={this.state.videos}
+                    selectVideo={this.selectVideo}
+                    show={this.state.show}
+                    handleClose={this.handleClose}
+                />
             </div>
         )
     }

@@ -15,6 +15,13 @@ class AdminSingleQuestionContainer extends Component{
         responses: [],
         videos: [],
         show: false,
+        errors: {
+            title: null,
+            answer: null,
+            responseLength: null,
+            responseAnswer: null,
+            blankResponse: null,
+        }
     };
 
     componentDidMount() {
@@ -29,7 +36,13 @@ class AdminSingleQuestionContainer extends Component{
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if(!_.isEqual(prevProps.question, this.props.question)){
-            this.setState({ responses: this.props.question.responses });
+            this.setState({
+                title: this.props.question.title,
+                type: this.props.question.type,
+                category: this.props.question.category,
+                answer: this.props.question.answers?  this.props.question.answers.answer : null,
+                responses: this.props.question.responses
+            });
         }
 
         if (!_.isEqual(prevProps.videos, this.props.videos)){
@@ -64,13 +77,14 @@ class AdminSingleQuestionContainer extends Component{
     };
 
     renderTextAnswer = () => {
-        if (!this.props.question.answers) return;
+        if (this.state.type !== 'text') return;
         return (
             <div>
-                <label className="red">Answer</label>
+                <label className="drkBlue">Answer</label>
+                {this.state.errors.answer ? <span className="red">An answer must be entered</span> : null}
                 <input
                     type="text"
-                    value={this.state.answer || this.props.question.answers.answer}
+                    value={this.state.answer}
                     onChange={e=>this.changeAnswer(e.target.value)}
                 />
             </div>
@@ -95,7 +109,10 @@ class AdminSingleQuestionContainer extends Component{
 
         return (
             <div>
-                <label className='red'>Responses</label>
+                <label className='drkBlue'>Responses</label>
+                {this.state.errors.responseLength ? <span className="red">There must be at least 2 responses to a multiple choice question<br/></span> : null}
+                {this.state.errors.responseAnswer ? <span className="red">At least 1 response must be selected as an answer<br/></span> : null}
+                {this.state.errors.blankResponse ? <span className="red">Responses must not be blank <br/></span> : null}
                 {jsx}
                 <div className={styles.add}><p className='m:0' onClick={this.addResponse}>Add Response</p></div>
             </div>
@@ -160,26 +177,48 @@ class AdminSingleQuestionContainer extends Component{
         });
     };
 
+    submit = (e) => {
+        e.preventDefault();
+        console.log(this.state);
+        const { title, type,  category, answer, responses, videos } = this.state;
+        const errors = {};
+        if (title.trim().length === 0) errors.title = true;
+        if (type === 'text'){
+            if (answer.trim().length === 0) errors.answer = true;
+        }else if (type === 'multiple choice'){
+            if (responses.length < 2) errors.responseLength = true;
+            responses.forEach(item => {
+                if (item.response.trim().length === 0) errors.blankResponse = true;
+            });
+            const answerList = responses.filter(item => item.answer);
+            if (answerList.length === 0) errors.responseAnswer = true;
+        }
+        this.setState({ errors });
+
+
+    }
+
     render(){
         return(
             <div className='row'>
                 <div className="col-12 col-md-6">
-                    <form>
+                    <form onSubmit={this.submit}>
                         <div className="form-group">
-                            <label className='red'>Title</label>
+                            <label className='drkBlue'>Title</label>
+                            {this.state.errors.title ? <span className="red">A title must be entered</span> : null}
                             <input
                                 type="text"
-                                value={this.state.title || this.props.question.title}
+                                value={this.state.title}
                                 onChange={e => this.changeTitle(e.target.value)}
                             />
                         </div>
                         <div className="form-group">
-                            <label className="red">Type</label>
+                            <label className="drkBlue">Type</label>
                             <input type="text" disabled value={this.props.question.type}/>
                         </div>
                         <div className="form-group">
-                            <label className='red'>Category</label>
-                            <select value={this.state.category || this.props.question.category} onChange={e=>this.changeCategory(e.target.value)}>
+                            <label className='drkBlue'>Category</label>
+                            <select value={this.state.category} onChange={e=>this.changeCategory(e.target.value)}>
                                 <option value="physics">Physics</option>
                                 <option value="chemistry">Chemistry</option>
                                 <option value="math">Math</option>
@@ -192,7 +231,7 @@ class AdminSingleQuestionContainer extends Component{
                     </form>
                 </div>
                 <div className="col-12 col-md-6">
-                    <label className='red'>Videos</label>
+                    <label className='drkBlue'>Videos</label>
                     {this.renderVideos()}
                     <div className={styles.add} onClick={this.handleShow}>Add Video</div>
                 </div>
@@ -202,6 +241,7 @@ class AdminSingleQuestionContainer extends Component{
                     show={this.state.show}
                     handleClose={this.handleClose}
                 />
+                <div className="col-12"><button className={`lgtBlueBG white ${styles.submit}`} onClick={this.submit}>Save Changes</button></div>
             </div>
         )
     }

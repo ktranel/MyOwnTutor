@@ -12,3 +12,10 @@
     background:#ccc;
     color:#fff;
 }
+
+.submit{
+    padding: .5rem .8rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+}

@@ -20,6 +20,7 @@
     "express-mysql-session": "^2.1.0",
     "express-session": "^1.15.6",
     "http-errors": "~1.6.2",
+    "lodash": "^4.17.15",
     "luxon": "^1.13.2",
     "morgan": "~1.9.0",
     "mysql2": "^1.6.5",
@@ -35,6 +36,7 @@
     "react-scripts": "^2.1.8",
     "sequelize": "^5.2.7",
     "sinon": "^7.3.2",
+    "underscore": "^1.9.1",
     "validate.js": "^0.13.1"
   },
   "devDependencies": {

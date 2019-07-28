@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { VideoListItem } from "../Video_List_Item/VideoListItem";
 
-class AdminCourseList extends Component{
+class AdminVideoList extends Component{
     render(){
         return(
             <div>
@@ -19,4 +19,4 @@ class AdminCourseList extends Component{
     }
 }
 
-export default AdminCourseList;
+export default AdminVideoList;

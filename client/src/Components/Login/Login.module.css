@@ -18,3 +18,10 @@
     padding:3%;
     border-radius:4px;
 }
+
+.container{
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

@@ -1,8 +1,8 @@
 module.exports = (sequelize, Datatypes) => sequelize.define('question', {
     id: {
-        type: Datatypes.INTEGER,
+        type: Datatypes.UUID,
         primaryKey: true,
-        autoIncrement: true,
+        defaultValue: Datatypes.UUIDV4,
     },
     type: {
         // fk from the section table
@@ -21,6 +21,11 @@ module.exports = (sequelize, Datatypes) => sequelize.define('question', {
         type: Datatypes.UUID,
         required: true,
         allowNull: false,
+    },
+    category: {
+        type: Datatypes.STRING,
+        required: false,
+        defaultValue: 'uncategorized',
     },
     updated_at: { type: Datatypes.DATE },
     deleted_at: { type: Datatypes.DATE },

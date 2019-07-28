@@ -3,6 +3,7 @@ import Login from './Login';
 import LoadingScreen from '../shared/Loading_Screen/Loading_Screen';
 import {UserAuth, GetUser} from "../../Actions/User_Actions";
 import {connect} from 'react-redux';
+import styles from './Login.module.css';
 
 class Login_Container extends Component{
     _isMounted = false;
@@ -66,7 +67,7 @@ class Login_Container extends Component{
         }
     }
     render(){
-        return (this.state.loading ? <LoadingScreen type={'spin'} color={'#000'}/> : <Login SignIn={this.SignIn}/>)
+        return (this.state.loading ? <div className={`${styles.container} row redBG white`}><LoadingScreen type={'cylon'} color={'#fff'}/></div> : <Login SignIn={this.SignIn}/>)
     }
 }
 

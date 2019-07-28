@@ -8,7 +8,7 @@ module.exports = (sequelize, Datatypes) => sequelize.define('section_video', {
     },
     video_id: {
         // fk from the course table
-        type: Datatypes.INTEGER,
+        type: Datatypes.UUID,
         required: true,
         allowNull: false,
     },

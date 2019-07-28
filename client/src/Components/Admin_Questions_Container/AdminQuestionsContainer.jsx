@@ -1,44 +1,12 @@
 import React, { Component } from 'react';
 import AdminQuestionList from '../Admin_Question_List/AdminQuestionList';
-import {DateTime} from "luxon";
 import {Link} from 'react-router-dom';
 import { connect } from "react-redux";
 import { getAdminQuestionList } from "../../Actions/Question_Actions";
 import ReactPaginate from "react-paginate";
 
-const Question_Mock = {
-    questions:[
-        {
-            id:899879,
-            type: 'text',
-            category: 'Chemistry',
-            title: 'What is the circumference of a circle?',
-            author: 'Kyle Tranel',
-            edited: DateTime.local().toLocaleString(DateTime.DATETIME_MED)
-        },
-        {
-            id:551,
-            type: 'text',
-            category: 'Chemistry',
-            title: 'What is your name?',
-            author: 'Kyle Tranel',
-            edited: DateTime.local().toLocaleString(DateTime.DATETIME_MED)
-        },
-        {
-            id:4525,
-            type: 'multiple choice',
-            category: 'Chemistry',
-            title: 'Given the following equation, what is the answer to an anonymous question?',
-            author: 'Kyle Tranel',
-            edited: DateTime.local().toLocaleString(DateTime.DATETIME_MED)
-        }
-    ],
-    page:1,
-    pages:5
-};
-
 class AdminQuestionsContainer extends Component{
-    state = {page: 1};
+    state = { page: 1 };
     componentDidMount() {
         this.props.getAdminQuestionList(1);
     }

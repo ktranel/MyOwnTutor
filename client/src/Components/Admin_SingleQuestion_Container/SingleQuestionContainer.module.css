@@ -1,0 +1,28 @@
+.add{
+    text-align: center;
+    padding: .5rem 0;
+    border: 3px dashed #ccc;
+    border-radius: 10px;
+    cursor: pointer;
+    color:#ccc;
+    font-size: 16px;
+}
+
+.add:hover{
+    background:#ccc;
+    color:#fff;
+}
+
+.submit{
+    padding: .5rem .8rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+}
+
+.video{
+    padding:.5rem 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius:5px;
+}

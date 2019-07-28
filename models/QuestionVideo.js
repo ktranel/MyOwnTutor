@@ -1,4 +1,4 @@
-module.exports = (sequelize, Datatypes) => sequelize.define('answer', {
+module.exports = (sequelize, Datatypes) => sequelize.define('question_video', {
     id: {
         type: Datatypes.INTEGER,
         primaryKey: true,
@@ -10,16 +10,14 @@ module.exports = (sequelize, Datatypes) => sequelize.define('answer', {
         required: true,
         allowNull: false,
     },
-    answer: {
-        // fk from question table
-        type: Datatypes.TEXT,
+    video_id: {
+        // fk from the video table
+        type: Datatypes.UUID,
         required: true,
         allowNull: false,
     },
     updated_at: { type: Datatypes.DATE },
-    deleted_at: { type: Datatypes.DATE },
 },
 {
     underscored: true,
-    paranoid: true,
 });

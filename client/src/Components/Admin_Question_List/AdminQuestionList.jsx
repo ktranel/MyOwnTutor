@@ -1,5 +1,5 @@
 import React from 'react';
-import { QuestionListItem } from "../Question_List_Item/QuestionListItem";
+import QuestionListItem  from "../Question_List_Item/QuestionListItem";
 
 const AdminQuestionList = ({questions}) =>{
     return(
